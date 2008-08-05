@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@yahoo.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 0.45
+" Version: 0.46
 "
 " Description: {{{
 "   Use your tab key to do all your completion in insert mode!
@@ -69,8 +69,9 @@ endif
   " variable is non-zero and non-empty then the associated completion type
   " will be used.
   " Ex. To use omni or user completion when available, but fall back to the
-  " global default otherwise.
-  "   let g:SuperTabDefaultCompletionTypeDiscovery = "&omnifunc:<C-X><C-O>,&completefunc:<C-X><C-U>"
+  " global default otherwise:
+  "   let g:SuperTabDefaultCompletionTypeDiscovery =
+  "       \ "&omnifunc:<C-X><C-O>,&completefunc:<C-X><C-U>"
   if !exists("g:SuperTabDefaultCompletionTypeDiscovery")
     let g:SuperTabDefaultCompletionTypeDiscovery = ""
   endif
@@ -120,6 +121,15 @@ endif
   endif
   if !exists("g:SuperTabMappingBackward")
     let g:SuperTabMappingBackward = '<s-tab>'
+  endif
+
+  " Sets the key mapping used to insert a literal tab where supertab would
+  " otherwise attempt to kick off insert completion.
+  " The default is '<c-tab>' (ctrl-tab) which unfortunately might not work at
+  " the console.  So if you are using a console vim and want this
+  " functionality, you'll have to change it to something that is supported.
+  if !exists("g:SuperTabMappingTabLiteral")
+    let g:SuperTabMappingTabLiteral = '<c-tab>'
   endif
 
   " Sets whether or not to pre-highlight first match when completeopt has
@@ -437,6 +447,9 @@ function! s:WillComplete ()
 endfunction " }}}
 
 " Key Mappings {{{
+  " map a regular tab to ctrl-tab (note: doesn't work in console vim)
+  exec 'inoremap ' . g:SuperTabMappingTabLiteral . ' <tab>'
+
   im <C-X> <C-r>=CtrlXPP()<CR>
 
   " From the doc |insert.txt| improved
