@@ -255,8 +255,13 @@ function! s:Init ()
     autocmd!
     autocmd BufEnter * call <SID>InitBuffer()
   augroup END
-  " ensure InitBuffer gets called for the first buffer.
-  call s:InitBuffer()
+
+  " ensure InitBuffer gets called for the first buffer, after the ftplugins
+  " have been called.
+  augroup supertab_init_first
+    autocmd!
+    autocmd FileType <buffer> call <SID>InitBuffer()
+  augroup END
 
   " Setup mechanism to restore orignial completion type upon leaving insert
   " mode if g:SuperTabRetainCompletionType == 2
