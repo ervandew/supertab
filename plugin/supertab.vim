@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 0.46
+" Version: 0.48
 "
 " Description: {{{
 "   Use your tab key to do all your completion in insert mode!
@@ -199,10 +199,10 @@ endif
 
   " set the available completion types and modes.
   let s:types =
-    \ "\<C-E>\<C-Y>\<C-L>\<C-N>\<C-K>\<C-T>\<C-I>\<C-]>\<C-F>\<C-D>\<C-V>\<C-N>\<C-P>"
+    \ "\<c-e>\<c-y>\<c-l>\<c-n>\<c-k>\<c-t>\<c-i>\<c-]>\<c-f>\<c-d>\<c-v>\<c-n>\<c-p>"
   let s:modes = '/^E/^Y/^L/^N/^K/^T/^I/^]/^F/^D/^V/^P'
   if v:version >= 700
-    let s:types = s:types . "\<C-U>\<C-O>\<C-N>\<C-P>s"
+    let s:types = s:types . "\<c-u>\<c-o>\<c-n>\<c-p>s"
     let s:modes = s:modes . '/^U/^O/s'
   endif
   let s:types = s:types . "np"
@@ -218,23 +218,29 @@ function! CtrlXPP ()
   endif
   let complType = nr2char(getchar())
   if stridx(s:types, complType) != -1
-    if stridx("\<C-E>\<C-Y>", complType) != -1 " no memory, just scroll...
-      return "\<C-x>" . complType
+    if stridx("\<c-e>\<c-y>", complType) != -1 " no memory, just scroll...
+      return "\<c-x>" . complType
     elseif stridx('np', complType) != -1
-      let complType = nr2char(char2nr(complType) - 96)  " char2nr('n')-char2nr("\<C-n")
+      let complType = nr2char(char2nr(complType) - 96)
     else
-      let complType="\<C-x>" . complType
+      let complType = "\<c-x>" . complType
     endif
 
     if g:SuperTabRetainCompletionType
       let b:complType = complType
     endif
 
-    return complType
-  else
-    echohl "Unknown mode"
+    " Hack to workaround appent bug when invoking command line completion via
+    " <c-r>=
+    if complType == "\<c-x>\<c-v>"
+      return s:CommandLineCompletion()
+    endif
+
     return complType
   endif
+
+  echohl "Unknown mode"
+  return complType
 endfunction " }}}
 
 " SuperTabSetCompletionType(type) {{{
@@ -243,7 +249,7 @@ endfunction " }}}
 " default or switch to another mode without having to kick off a completion
 " of that type or use SuperTabHelp.
 " Example mapping to restore SuperTab default:
-"   nmap <F6> :call SetSuperTabCompletionType("<C-P>")<cr>
+"   nmap <F6> :call SetSuperTabCompletionType("<c-p>")<cr>
 function! SuperTabSetCompletionType (type)
   exec "let b:complType = \"" . escape(a:type, '<') . "\""
 endfunction " }}}
@@ -268,7 +274,7 @@ function! s:Init ()
   if g:SuperTabRetainCompletionType == 2
     " pre vim 7, must map <esc>
     if v:version < 700
-      im <silent> <ESC> <ESC>:call s:SetDefaultCompletionType()<cr>
+      imap <silent> <ESC> <ESC>:call s:SetDefaultCompletionType()<cr>
 
     " since vim 7, we can use InsertLeave autocmd.
     else
@@ -286,6 +292,9 @@ function! s:InitBuffer ()
   if exists("b:complType")
     return
   endif
+
+  " init hack for <c-x><c-v> workaround.
+  let b:complCommandLine = 0
 
   if !exists("b:SuperTabDefaultCompletionType")
     " loop through discovery list to find the default
@@ -394,7 +403,7 @@ endfunction " }}}
 
 " s:SetDefaultCompletionType() {{{
 function! s:SetDefaultCompletionType ()
-  if exists('b:SuperTabDefaultCompletionType')
+  if exists('b:SuperTabDefaultCompletionType') && !b:complCommandLine
     call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
   endif
 endfunction " }}}
@@ -441,6 +450,11 @@ function! s:SuperTab (command)
       return complType . key
     endif
 
+    " Hack to workaround appent bug when invoking command line completion via
+    " <c-r>=
+    if b:complType == "\<c-x>\<c-v>"
+      return s:CommandLineCompletion()
+    endif
     return b:complType . key
   endif
 
@@ -506,23 +520,36 @@ function! s:WillComplete ()
   return 1
 endfunction " }}}
 
+" s:CommandLineCompletion() {{{
+" Hack needed to account for apparent bug in vim command line mode completion
+" when invoked via <c-r>=
+function! s:CommandLineCompletion()
+  " This hack will trigger InsertLeave which will then invoke
+  " s:SetDefaultCompletionType.  To prevent default completion from being
+  " restored prematurely, set an internal flag for s:SetDefaultCompletionType
+  " to check for.
+  let b:complCommandLine = 1
+  return "\<c-\>\<c-o>:call feedkeys('\<c-x>\<c-v>\<c-v>', 'n') | " .
+    \ "let b:complCommandLine = 0\<cr>"
+endfunction " }}}
+
 " Key Mappings {{{
   " map a regular tab to ctrl-tab (note: doesn't work in console vim)
   exec 'inoremap ' . g:SuperTabMappingTabLiteral . ' <tab>'
 
-  im <c-x> <c-r>=CtrlXPP()<cr>
+  imap <c-x> <c-r>=CtrlXPP()<cr>
 
   " From the doc |insert.txt| improved
-  exec 'im ' . g:SuperTabMappingForward . ' <c-n>'
-  exec 'im ' . g:SuperTabMappingBackward . ' <c-p>'
+  exec 'imap ' . g:SuperTabMappingForward . ' <c-n>'
+  exec 'imap ' . g:SuperTabMappingBackward . ' <c-p>'
 
   " After hitting <Tab>, hitting it once more will go to next match
   " (because in XIM mode <c-n> and <c-p> mappings are ignored)
   " and wont start a brand new completion
   " The side effect, that in the beginning of line <c-n> and <c-p> inserts a
   " <Tab>, but I hope it may not be a problem...
-  ino <c-n> <c-r>=<SID>SuperTab('n')<cr>
-  ino <c-p> <c-r>=<SID>SuperTab('p')<cr>
+  inoremap <c-n> <c-r>=<SID>SuperTab('n')<cr>
+  inoremap <c-p> <c-r>=<SID>SuperTab('p')<cr>
 " }}}
 
 " Command Mappings {{{
@@ -531,6 +558,6 @@ endfunction " }}}
   endif
 " }}}
 
-call <SID>Init()
+call s:Init()
 
 " vim:ft=vim:fdm=marker
