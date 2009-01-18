@@ -15,7 +15,7 @@
 " License: {{{
 "   Software License Agreement (BSD License)
 "
-"   Copyright (c) 2002 - 2007
+"   Copyright (c) 2002 - 2009
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
