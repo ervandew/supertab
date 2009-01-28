@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 0.48
+" Version: 0.49
 "
 " Description: {{{
 "   Use your tab key to do all your completion in insert mode!
@@ -47,6 +47,11 @@
 "   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 "   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 "   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+" }}}
+"
+" Testing Info: {{{
+"   Running vim + supertab with the absolute bar minimum settings:
+"     $ vim -u NONE -U NONE -c "set nocp | runtime plugin/supertab.vim"
 " }}}
 
 if exists('complType') " Integration with other completion functions.
@@ -414,6 +419,10 @@ endfunction " }}}
 " retain the normal usage of <tab> based on the cursor position.
 function! s:SuperTab (command)
   if s:WillComplete()
+    " rare case where no autocmds have fired for this buffer to initialize the
+    " supertab vars.
+    call s:InitBuffer()
+
     let key = ''
     " highlight first result if longest enabled
     if g:SuperTabLongestHighlight && !pumvisible() && &completeopt =~ 'longest'
