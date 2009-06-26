@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 0.49
+" Version: 0.50
 "
 " Description: {{{
 "   Use your tab key to do all your completion in insert mode!
@@ -53,6 +53,10 @@
 "   Running vim + supertab with the absolute bar minimum settings:
 "     $ vim -u NONE -U NONE -c "set nocp | runtime plugin/supertab.vim"
 " }}}
+
+if v:version < 700
+  finish
+endif
 
 if exists('complType') " Integration with other completion functions.
   finish
@@ -194,22 +198,16 @@ endif
     \ "|<c-x><c-]>| - Tags.\n" .
     \ "|<c-x><c-f>| - File names.\n" .
     \ "|<c-x><c-d>| - Definitions or macros.\n" .
-    \ "|<c-x><c-v>| - Vim command-line."
-  if v:version >= 700
-    let s:tabHelp = s:tabHelp . "\n" .
-      \ "|<c-x><c-u>| - User defined completion.\n" .
-      \ "|<c-x><c-o>| - Omni completion.\n" .
-      \ "|<c-x>s|     - Spelling suggestions."
-  endif
+    \ "|<c-x><c-v>| - Vim command-line.\n" .
+    \ "|<c-x><c-u>| - User defined completion.\n" .
+    \ "|<c-x><c-o>| - Omni completion.\n" .
+    \ "|<c-x>s|     - Spelling suggestions."
 
   " set the available completion types and modes.
   let s:types =
-    \ "\<c-e>\<c-y>\<c-l>\<c-n>\<c-k>\<c-t>\<c-i>\<c-]>\<c-f>\<c-d>\<c-v>\<c-n>\<c-p>"
-  let s:modes = '/^E/^Y/^L/^N/^K/^T/^I/^]/^F/^D/^V/^P'
-  if v:version >= 700
-    let s:types = s:types . "\<c-u>\<c-o>\<c-n>\<c-p>s"
-    let s:modes = s:modes . '/^U/^O/s'
-  endif
+    \ "\<c-e>\<c-y>\<c-l>\<c-n>\<c-k>\<c-t>\<c-i>\<c-]>" .
+    \ "\<c-f>\<c-d>\<c-v>\<c-n>\<c-p>\<c-u>\<c-o>\<c-n>\<c-p>s"
+  let s:modes = '/^E/^Y/^L/^N/^K/^T/^I/^]/^F/^D/^V/^P/^U/^O/s'
   let s:types = s:types . "np"
   let s:modes = s:modes . '/n/p'
 
@@ -277,17 +275,10 @@ function! s:Init ()
   " Setup mechanism to restore orignial completion type upon leaving insert
   " mode if g:SuperTabRetainCompletionType == 2
   if g:SuperTabRetainCompletionType == 2
-    " pre vim 7, must map <esc>
-    if v:version < 700
-      imap <silent> <ESC> <ESC>:call s:SetDefaultCompletionType()<cr>
-
-    " since vim 7, we can use InsertLeave autocmd.
-    else
-      augroup supertab_retain
-        autocmd!
-        autocmd InsertLeave * call s:SetDefaultCompletionType()
-      augroup END
-    endif
+    augroup supertab_retain
+      autocmd!
+      autocmd InsertLeave * call s:SetDefaultCompletionType()
+    augroup END
   endif
 endfunction " }}}
 
