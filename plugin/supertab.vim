@@ -154,6 +154,10 @@ endif
   "    let g:SuperTabCompletionContexts =
   "      \ ['MyTagContext', 's:ContextText', 's:ContextDiscover']
   "
+  "  Note: supertab also supports the b:SuperTabCompletionContexts variable
+  "  allowing you to set the list of contexts separately for the current
+  "  buffer, like from an ftplugin for example.
+  "
   if !exists("g:SuperTabCompletionContexts")
     let g:SuperTabCompletionContexts = ['s:ContextText']
   endif
@@ -293,17 +297,6 @@ endfunction " }}}
 " s:Init {{{
 " Global initilization when supertab is loaded.
 function! s:Init()
-  let s:contexts = []
-  for context in g:SuperTabCompletionContexts
-    try
-      call add(s:contexts, function(context))
-    catch /E700/
-      echohl Error
-      echom 'supertab: no context function "' . context . '" found.'
-      echohl None
-    endtry
-  endfor
-
   augroup supertab_init
     autocmd!
     autocmd BufEnter * call <SID>InitBuffer()
@@ -513,11 +506,22 @@ endfunction " }}}
 
 " s:ContextCompletion() {{{
 function! s:ContextCompletion()
-  for Context in s:contexts
-    let complType = Context()
-    if type(complType) == 1 && complType != ''
-      return complType
-    endif
+  let contexts = exists('b:SuperTabCompletionContexts') ?
+    \ b:SuperTabCompletionContexts : g:SuperTabCompletionContexts
+
+  for context in contexts
+    try
+      let Context = function(context)
+      let complType = Context()
+      unlet Context
+      if type(complType) == 1 && complType != ''
+        return complType
+      endif
+    catch /E700/
+      echohl Error
+      echom 'supertab: no context function "' . context . '" found.'
+      echohl None
+    endtry
   endfor
   return ''
 endfunction " }}}
