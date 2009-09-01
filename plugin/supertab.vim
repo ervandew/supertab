@@ -286,12 +286,12 @@ endfunction " }}}
 "    console:
 "      imap <nul> <c-r>=SuperTabAlternateCompletion("\<lt>c-p>")<cr>
 function! SuperTabAlternateCompletion(type)
-  let initType = ''
-  if pumvisible() && a:type !~ "^<c-x>"
-    exec "let initType = \"" . escape("<c-x>" . a:type, '<') . "\""
-  endif
   call SuperTabSetCompletionType(a:type)
-  return initType != '' ? initType : b:complType
+  " end any current completion before attempting to start the new one.
+  " use feedkeys to prevent possible remapping of <c-e> from causing issues.
+  call feedkeys("\<c-e>", 'n')
+  call feedkeys(b:complType)
+  return ''
 endfunction " }}}
 
 " s:Init {{{
