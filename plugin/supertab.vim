@@ -69,7 +69,7 @@ endif
   " the type is set.
   " Ex.  let g:SuperTabDefaultCompletionType = "<c-x><c-u>"
   "
-  " Note that a special value of 'context' is supported which will result in
+  " Note: a special value of 'context' is supported which will result in
   " super tab attempting to use the text preceding the cursor to decide which
   " type of completion to attempt.  Currently super tab can recognize method
   " calls or attribute references via '.', '::' or '->', and file path
@@ -82,6 +82,14 @@ endif
   "
   " When using context completion, super tab will fall back to a secondary
   " default completion type set by g:SuperTabContextDefaultCompletionType.
+  "
+  " Note: once the buffer has been initialized, changing the value of this
+  " setting will not change the default complete type used.  If you want to
+  " change the default completion type for the current buffer after it has
+  " been set, perhaps in an ftplugin, you'll need to call
+  " SuperTabSetDefaultCompletionType like so, supplying the completion type
+  " you wish to switch to:
+  "   call SuperTabSetDefaultCompletionType("<c-x><c-u>")
   if !exists("g:SuperTabDefaultCompletionType")
     let g:SuperTabDefaultCompletionType = "<c-p>"
   endif
@@ -261,12 +269,29 @@ endif
 
 " }}}
 
+" SuperTabSetDefaultCompletionType(type) {{{
+" Globally available function that users can use to set the default
+" completion type for the current buffer, like in an ftplugin.
+function! SuperTabSetDefaultCompletionType(type)
+  " init hack for <c-x><c-v> workaround.
+  let b:complCommandLine = 0
+
+  let b:SuperTabDefaultCompletionType = a:type
+
+  " set the current completion type to the default
+  call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
+endfunction " }}}
+
 " SuperTabSetCompletionType(type) {{{
-" Globally available function that user's can use to create mappings to
-" quickly switch completion modes.  Useful when a user wants to restore the
-" default or switch to another mode without having to kick off a completion
-" of that type or use SuperTabHelp.
-" Example mapping to restore SuperTab default:
+" Globally available function that users can use to create mappings to quickly
+" switch completion modes.  Useful when a user wants to restore the default or
+" switch to another mode without having to kick off a completion of that type
+" or use SuperTabHelp.  Note, this function only changes the current
+" completion type, not the default, meaning that the default will still be
+" restored once the configured retension duration has been met (see
+" g:SuperTabRetainCompletionDuration).  To change the default for the current
+" buffer, use SuperTabDefaultCompletionType(type) instead.  Example mapping to
+" restore SuperTab default:
 "   nmap <F6> :call SetSuperTabCompletionType("<c-p>")<cr>
 function! SuperTabSetCompletionType(type)
   exec "let b:complType = \"" . escape(a:type, '<') . "\""
@@ -331,7 +356,7 @@ function! s:InitBuffer()
 
   let b:SuperTabDefaultCompletionType = g:SuperTabDefaultCompletionType
 
-  " set the default completion type.
+  " set the current completion type to the default
   call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
 endfunction " }}}
 
