@@ -314,7 +314,11 @@ function! SuperTabAlternateCompletion(type)
   call SuperTabSetCompletionType(a:type)
   " end any current completion before attempting to start the new one.
   " use feedkeys to prevent possible remapping of <c-e> from causing issues.
-  call feedkeys("\<c-e>", 'n')
+  "call feedkeys("\<c-e>", 'n')
+  " ^ since we can't detect completion mode vs regular insert mode, we force
+  " vim into keyword completion mode and end that mode to prevent the regular
+  " insert behavior of <c-e> from occurring.
+  call feedkeys("\<c-x>\<c-p>\<c-e>", 'n')
   call feedkeys(b:complType)
   return ''
 endfunction " }}}
