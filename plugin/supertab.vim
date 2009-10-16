@@ -411,7 +411,8 @@ endfunction " }}}
 
 " s:SetDefaultCompletionType() {{{
 function! s:SetDefaultCompletionType()
-  if exists('b:SuperTabDefaultCompletionType') && !b:complCommandLine
+  if exists('b:SuperTabDefaultCompletionType') &&
+  \ (!exists('b:complCommandLine') || !b:complCommandLine)
     call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
   endif
 endfunction " }}}
