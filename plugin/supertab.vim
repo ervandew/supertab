@@ -3,6 +3,7 @@
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
 " Version: 0.61
+" GetLatestVimScripts: 1643 1 :AutoInstall: supertab.vim
 "
 " Description: {{{
 "   Use your tab key to do all your completion in insert mode!
@@ -126,7 +127,7 @@ endif
   "       g:SuperTabContextTextFileTypeExclusions
   "         List of file types for which the text context will be skipped.
   "       g:SuperTabContextTextOmniPrecedence
-  "         List of omni completion option names in the order of precendence
+  "         List of omni completion option names in the order of precedence
   "         that they should be used if available. By default, user completion
   "         will be given precedence over omni completion, but you can use
   "         this variable to give omni completion higher precedence by placing
@@ -206,7 +207,7 @@ endif
   " Note: if the above does not have the desired effect (which may happen in
   " console version of vim), you can try the following mappings.  Although the
   " backwards mapping still doesn't seem to work in the console for me, your
-  " milage may vary.
+  " millage may vary.
   "
   "   let g:SuperTabMappingForward = '<nul>'
   "   let g:SuperTabMappingBackward = '<s-nul>'
