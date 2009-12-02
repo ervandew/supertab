@@ -63,6 +63,9 @@ if exists('complType') " Integration with other completion functions.
   finish
 endif
 
+let s:save_cpo=&cpo
+set cpo&vim
+
 " Global Variables {{{
 
   " Used to set the default completion type.
@@ -632,5 +635,7 @@ endfunction " }}}
 " }}}
 
 call s:Init()
+
+let &cpo = s:save_cpo
 
 " vim:ft=vim:fdm=marker
