@@ -308,6 +308,11 @@ function! s:SuperTab(command)
       \   (b:complType == 'context' &&
       \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-p>'))
       return "\<c-n>"
+    elseif a:command == 'p' &&
+      \ (b:complType == "\<c-n>" ||
+      \   (b:complType == 'context' &&
+      \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-n>'))
+      return "\<c-p>"
     endif
 
     " handle 'context' completion.
