@@ -14,8 +14,6 @@
 " }}}
 "
 " License: {{{
-"   Software License Agreement (BSD License)
-"
 "   Copyright (c) 2002 - 2009
 "   All rights reserved.
 "
