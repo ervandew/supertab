@@ -61,6 +61,14 @@ Supertab is configured via several global variables that you can set in your
 |vimrc| file according to your needs. Below is a comprehensive list of
 the variables available.
 
+Note: In addition to the settings described below there are a couple
+non-supertab specific vim mappings that can be helpful when using vim's insert
+completion:
+  " Hit enter to select highlighted completion
+  inoremap <expr> <cr>  pumvisible() ? "\<c-y>" : "\<cr>"
+  " Hit ctrl-c to cancel completion and restore the text
+  inoremap <expr> <c-c> pumvisible() ? "\<c-e>" : "\<c-c>"
+
 g:SuperTabDefaultCompletionType             |supertab-defaultcompletion|
   The default completion type to use. If you program in languages that support
   omni or user completions, it is highly recommended setting this to
