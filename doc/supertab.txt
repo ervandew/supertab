@@ -28,6 +28,7 @@ Supertab                                    *supertab*
     Midword completion                  |supertab-midword|
     Changing default mapping            |supertab-forwardbackward|
     Inserting true tabs                 |supertab-mappingtabliteral|
+    Enhanced longest match support      |supertab-longestenchanced|
     Preselecting the first entry        |supertab-longesthighlight|
 
 ==============================================================================
@@ -97,6 +98,12 @@ g:SuperTabMappingTabLiteral                 |supertab-mappingtabliteral|
   completion, but you just want to insert a tab, this setting is used to
   define the key combination to use to do just that.  By default Ctrl-Tab is
   used.
+
+g:SuperTabLongestEnhanced                   |supertab-longestenchanced|
+  When enabled and 'longest' is in your |completeopt| setting, supertab will
+  provide an enhanced longest match support where typing one or more letters
+  and hitting tab again while in a completion mode will complete the longest
+  common match using the new text in the buffer.
 
 g:SuperTabLongestHighlight                  |supertab-longesthighlight|
   When enabled and you have the completion popup enable and 'longest' in your
@@ -293,6 +300,31 @@ otherwise attempt to kick off insert completion. The default is '<c-tab>'
 using a console vim and want this functionality, you may have to change it to
 something that is supported.  Alternatively, you can escape the <tab> with
 <c-v> (see |i_CTRL-V| for more infos).
+
+
+Enhanced longest match support      *supertab-longestenchanced*
+                                    *g:SuperTabLongestEnhanced*
+
+g:SuperTabLongestEnhanced (default value: 0)
+
+When enabled and 'longest' is in your |completeopt| setting, supertab will
+provide an enhanced longest match support where typing one or more letters and
+hitting tab again while in a completion mode will complete the longest common
+match using the new text in the buffer.
+
+For example, say you have a buffer with the following contents:
+  FooBarFoo
+  FooBar
+  Foo
+  FooBarBaz
+And you then type F<tab>.  Vim's builtin longest support will complete the
+longest common text 'Foo' and offer 'FooBarFoo', 'FooBar', 'Foo', and
+'FooBarBaz' as possible completions.  With supertab's longest match
+enhancement disabled, typing B<tab> while still in the completion mode will
+end up completing 'FooBarBaz' or 'FooBarFoo' depending your settings, instead
+of the next longest common match of 'FooBar'.  With supertab's enhanced
+longest match feature enabled, the typing of B<tab> will result in the next
+longest text being completed.
 
 
 Preselecting the first entry        *supertab-longesthighlight*

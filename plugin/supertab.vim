@@ -97,6 +97,10 @@ set cpo&vim
     let g:SuperTabMappingTabLiteral = '<c-tab>'
   endif
 
+  if !exists("g:SuperTabLongestEnhanced")
+    let g:SuperTabLongestEnhanced = 0
+  endif
+
   if !exists("g:SuperTabLongestHighlight")
     let g:SuperTabLongestHighlight = 0
   endif
@@ -217,9 +221,12 @@ endfunction " }}}
 " s:InitBuffer {{{
 " Per buffer initilization.
 function! s:InitBuffer()
-  if exists("b:complType")
+  if exists('b:complType')
     return
   endif
+
+  let b:complReset = 0
+  let b:capturing = 0
 
   " init hack for <c-x><c-v> workaround.
   let b:complCommandLine = 0
@@ -253,6 +260,11 @@ function! s:ManualCompletionEnter()
     " Hack to workaround bug when invoking command line completion via <c-r>=
     if complType == "\<c-x>\<c-v>"
       return s:CommandLineCompletion()
+    endif
+
+    " optionally enable enhanced longest completion
+    if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
+      call s:EnableLongestEnhancement()
     endif
 
     return complType
@@ -293,24 +305,41 @@ function! s:SuperTab(command)
     " supertab vars.
     call s:InitBuffer()
 
-    let key = ''
+    " optionally enable enhanced longest completion
+    if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
+      call s:EnableLongestEnhancement()
+    endif
+
     " highlight first result if longest enabled
     if g:SuperTabLongestHighlight && !pumvisible() && &completeopt =~ 'longest'
-      let key = (b:complType == "\<c-p>") ? "\<c-p>" : "\<c-n>"
+      let key = (b:complType == "\<c-p>") ? b:complType : "\<c-n>"
+      call feedkeys(key)
     endif
 
     " exception: if in <c-p> mode, then <c-n> should move up the list, and
     " <c-p> down the list.
-    if a:command == 'p' &&
+    if a:command == 'p' && !b:complReset &&
       \ (b:complType == "\<c-p>" ||
       \   (b:complType == 'context' &&
       \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-p>'))
       return "\<c-n>"
-    elseif a:command == 'p' &&
+
+    elseif a:command == 'p' && !b:complReset &&
       \ (b:complType == "\<c-n>" ||
       \   (b:complType == 'context' &&
       \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-n>'))
       return "\<c-p>"
+
+    " this used to handle call from s:CompletionModeTab() with the longest
+    " enhancement enabled, but also must work when the enhancement is
+    " disabled.
+    elseif a:command == 'n' && pumvisible() && !b:complReset
+      if b:complType == 'context'
+        exec "let complType = \"" .
+          \ escape(g:SuperTabContextDefaultCompletionType, '<') . "\""
+        return complType
+      endif
+      return b:complType == "\<c-p>" ? b:complType : "\<c-n>"
     endif
 
     " handle 'context' completion.
@@ -320,14 +349,20 @@ function! s:SuperTab(command)
         exec "let complType = \"" .
           \ escape(g:SuperTabContextDefaultCompletionType, '<') . "\""
       endif
-      return complType . key
-    endif
 
     " Hack to workaround bug when invoking command line completion via <c-r>=
-    if b:complType == "\<c-x>\<c-v>"
-      return s:CommandLineCompletion()
+    elseif b:complType == "\<c-x>\<c-v>"
+      let complType = s:CommandLineCompletion()
+    else
+      let complType = b:complType
     endif
-    return b:complType . key
+
+    if b:complReset
+      let b:complReset = 0
+      return "\<c-e>" . complType
+    endif
+
+    return complType
   endif
 
   return "\<tab>"
@@ -390,6 +425,61 @@ function! s:WillComplete()
   "endif
 
   return 1
+endfunction " }}}
+
+" s:EnableLongestEnhancement() {{{
+function! s:EnableLongestEnhancement()
+  augroup supertab_reset
+    autocmd!
+    autocmd InsertLeave <buffer> call s:ReleaseKeyPresses() | autocmd! supertab_reset
+    call s:CaptureKeyPresses()
+  augroup END
+endfunction " }}}
+
+" s:CompletionReset() {{{
+function! s:CompletionReset(char)
+  let b:complReset = 1
+  return a:char
+endfunction " }}}
+
+" s:CompletionModeTab() {{{
+function! s:CompletionModeTab(char)
+  if (b:complType == "\<c-p>" ||
+    \   (b:complType == 'context' &&
+    \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-p>'))
+    return s:SuperTab('p')
+  endif
+  return s:SuperTab('n')
+endfunction " }}}
+
+" s:CaptureKeyPresses() {{{
+function! s:CaptureKeyPresses()
+  if !b:capturing
+    let b:capturing = 1
+    " TODO: use &keyword to get an accurate list of chars to map
+    for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
+      exec 'imap ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
+    endfor
+    imap <bs> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
+    imap <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
+    exec 'imap ' . g:SuperTabMappingForward .
+      \ ' <c-r>=<SID>CompletionModeTab("' .
+      \ substitute(g:SuperTabMappingForward, '<', '\<lt>', '') . '")<cr>'
+  endif
+endfunction " }}}
+
+" s:ReleaseKeyPresses() {{{
+function! s:ReleaseKeyPresses()
+  if b:capturing
+    let b:capturing = 0
+    for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
+      exec 'iunmap ' . c
+    endfor
+    iunmap <bs>
+    iunmap <c-h>
+    exec 'iunmap ' . g:SuperTabMappingForward
+    exec 'imap ' . g:SuperTabMappingForward . ' <c-n>'
+  endif
 endfunction " }}}
 
 " s:CommandLineCompletion() {{{
