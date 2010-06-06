@@ -14,7 +14,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2009
+"   Copyright (c) 2002 - 2010
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -431,7 +431,8 @@ endfunction " }}}
 function! s:EnableLongestEnhancement()
   augroup supertab_reset
     autocmd!
-    autocmd InsertLeave <buffer> call s:ReleaseKeyPresses() | autocmd! supertab_reset
+    autocmd InsertLeave,CursorMovedI <buffer>
+      \ call s:ReleaseKeyPresses() | autocmd! supertab_reset
     call s:CaptureKeyPresses()
   augroup END
 endfunction " }}}
@@ -479,6 +480,9 @@ function! s:ReleaseKeyPresses()
     iunmap <c-h>
     exec 'iunmap ' . g:SuperTabMappingForward
     exec 'imap ' . g:SuperTabMappingForward . ' <c-n>'
+    if mode() == 'i'
+      call feedkeys("\<c-e>")
+    endif
   endif
 endfunction " }}}
 
