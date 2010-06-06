@@ -459,11 +459,11 @@ function! s:CaptureKeyPresses()
     let b:capturing = 1
     " TODO: use &keyword to get an accurate list of chars to map
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
-      exec 'imap ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
+      exec 'imap <buffer> ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
     endfor
-    imap <bs> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
-    imap <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
-    exec 'imap ' . g:SuperTabMappingForward .
+    imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
+    imap <buffer> <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
+    exec 'imap <buffer> ' . g:SuperTabMappingForward .
       \ ' <c-r>=<SID>CompletionModeTab("' .
       \ substitute(g:SuperTabMappingForward, '<', '\<lt>', '') . '")<cr>'
   endif
@@ -474,12 +474,11 @@ function! s:ReleaseKeyPresses()
   if b:capturing
     let b:capturing = 0
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
-      exec 'iunmap ' . c
+      exec 'iunmap <buffer> ' . c
     endfor
-    iunmap <bs>
-    iunmap <c-h>
-    exec 'iunmap ' . g:SuperTabMappingForward
-    exec 'imap ' . g:SuperTabMappingForward . ' <c-n>'
+    iunmap <buffer> <bs>
+    iunmap <buffer> <c-h>
+    exec 'iunmap <buffer> ' . g:SuperTabMappingForward
     if mode() == 'i'
       call feedkeys("\<c-e>")
     endif
