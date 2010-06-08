@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 1.0
+" Version: 1.1
 " GetLatestVimScripts: 1643 1 :AutoInstall: supertab.vim
 "
 " Description: {{{
@@ -480,7 +480,8 @@ function! s:ReleaseKeyPresses()
     iunmap <buffer> <c-h>
     exec 'iunmap <buffer> ' . g:SuperTabMappingForward
     if mode() == 'i'
-      call feedkeys("\<c-e>")
+      " force full exit from completion mode
+      call feedkeys("\<esc>a", 'n')
     endif
   endif
 endfunction " }}}
