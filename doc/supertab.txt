@@ -61,14 +61,6 @@ Supertab is configured via several global variables that you can set in your
 |vimrc| file according to your needs. Below is a comprehensive list of
 the variables available.
 
-Note: In addition to the settings described below there are a couple
-non-supertab specific vim mappings that can be helpful when using vim's insert
-completion:
-  " Hit enter to select highlighted completion
-  inoremap <expr> <cr>  pumvisible() ? "\<c-y>" : "\<cr>"
-  " Hit ctrl-c to cancel completion and restore the text
-  inoremap <expr> <c-c> pumvisible() ? "\<c-e>" : "\<c-c>"
-
 g:SuperTabDefaultCompletionType             |supertab-defaultcompletion|
   The default completion type to use. If you program in languages that support
   omni or user completions, it is highly recommended setting this to
@@ -116,6 +108,9 @@ g:SuperTabLongestEnhanced                   |supertab-longestenchanced|
 g:SuperTabLongestHighlight                  |supertab-longesthighlight|
   When enabled and you have the completion popup enable and 'longest' in your
   completeopt, supertab will auto highlight the first selection in the popup.
+
+g:SuperTabCrMapping                         |supertab-crmapping|
+  When enabled, <cr> will end completion mode preserving the current text.
 
 
 Default Completion Type             *supertab-defaultcompletion*
@@ -344,5 +339,13 @@ Sets whether or not to pre-highlight the first match when completeopt has the
 popup menu enabled and the 'longest' option as well. When enabled, <tab> will
 kick off completion and pre-select the first entry in the popup menu, allowing
 you to simply hit <enter> to use it.
+
+
+Mapping <cr> to end completion      *supertab-crmapping*
+                                    *g:SuperTabCrMapping*
+
+g:SuperTabCrMapping (default value: 1)
+
+When enabled, <cr> will cancel completion mode preserving the current text.
 
 vim:tw=78:ts=8:ft=help:norl:

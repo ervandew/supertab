@@ -105,6 +105,10 @@ set cpo&vim
     let g:SuperTabLongestHighlight = 0
   endif
 
+  if !exists("g:SuperTabCrMapping")
+    let g:SuperTabCrMapping = 1
+  endif
+
 " }}}
 
 " Script Variables {{{
@@ -588,6 +592,10 @@ endfunction " }}}
   " <Tab>, but I hope it may not be a problem...
   inoremap <c-n> <c-r>=<SID>SuperTab('n')<cr>
   inoremap <c-p> <c-r>=<SID>SuperTab('p')<cr>
+
+  if g:SuperTabCrMapping
+    inoremap <expr> <cr> pumvisible() ? "\<space>\<bs>" : "\<cr>"
+  endif
 " }}}
 
 " Command Mappings {{{
