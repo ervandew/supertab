@@ -480,8 +480,9 @@ function! s:ReleaseKeyPresses()
     iunmap <buffer> <c-h>
     exec 'iunmap <buffer> ' . g:SuperTabMappingForward
     if mode() == 'i'
-      " force full exit from completion mode
-      call feedkeys("\<esc>a", 'n')
+      " force full exit from completion mode (don't exit insert mode since
+      " that will break repeating with '.')
+      call feedkeys("\<space>\<bs>", 'n')
     endif
   endif
 endfunction " }}}
