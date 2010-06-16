@@ -334,9 +334,8 @@ function! s:SuperTab(command)
       \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-n>'))
       return "\<c-p>"
 
-    " this used to handle call from s:CompletionModeTab() with the longest
-    " enhancement enabled, but also must work when the enhancement is
-    " disabled.
+    " this used to handle call from captured keys with the longest enhancement
+    " enabled, but also must work when the enhancement is disabled.
     elseif a:command == 'n' && pumvisible() && !b:complReset
       if b:complType == 'context'
         exec "let complType = \"" .
@@ -447,16 +446,6 @@ function! s:CompletionReset(char)
   return a:char
 endfunction " }}}
 
-" s:CompletionModeTab() {{{
-function! s:CompletionModeTab(char)
-  if (b:complType == "\<c-p>" ||
-    \   (b:complType == 'context' &&
-    \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-p>'))
-    return s:SuperTab('p')
-  endif
-  return s:SuperTab('n')
-endfunction " }}}
-
 " s:CaptureKeyPresses() {{{
 function! s:CaptureKeyPresses()
   if !b:capturing
@@ -467,9 +456,7 @@ function! s:CaptureKeyPresses()
     endfor
     imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
     imap <buffer> <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
-    exec 'imap <buffer> ' . g:SuperTabMappingForward .
-      \ ' <c-r>=<SID>CompletionModeTab("' .
-      \ substitute(g:SuperTabMappingForward, '<', '\<lt>', '') . '")<cr>'
+    exec 'imap <buffer> ' . g:SuperTabMappingForward . ' <c-r>=<SID>SuperTab("n")<cr>'
   endif
 endfunction " }}}
 
