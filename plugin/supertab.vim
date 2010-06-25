@@ -230,6 +230,7 @@ function! s:InitBuffer()
   endif
 
   let b:complReset = 0
+  let b:complTypeContext = ''
   let b:capturing = 0
 
   " init hack for <c-x><c-v> workaround.
@@ -338,9 +339,14 @@ function! s:SuperTab(command)
     " enabled, but also must work when the enhancement is disabled.
     elseif a:command == 'n' && pumvisible() && !b:complReset
       if b:complType == 'context'
-        exec "let complType = \"" .
+        exec "let contextDefault = \"" .
           \ escape(g:SuperTabContextDefaultCompletionType, '<') . "\""
-        return complType
+        " if we are in another completion mode, just scroll to the next
+        " completion
+        if b:complTypeContext != contextDefault
+          return "\<c-n>"
+        endif
+        return contextDefault
       endif
       return b:complType == "\<c-p>" ? b:complType : "\<c-n>"
     endif
@@ -352,6 +358,7 @@ function! s:SuperTab(command)
         exec "let complType = \"" .
           \ escape(g:SuperTabContextDefaultCompletionType, '<') . "\""
       endif
+      let b:complTypeContext = complType
 
     " Hack to workaround bug when invoking command line completion via <c-r>=
     elseif b:complType == "\<c-x>\<c-v>"
