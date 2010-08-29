@@ -418,8 +418,7 @@ function! s:WillComplete()
   let cnum = col('.')
 
   " Start of line.
-  let prev_char = strpart(line, cnum - 2, 1)
-  if prev_char =~ '^\s*$'
+  if line =~ '^\s*\%' . cnum . 'c'
     return 0
   endif
 
