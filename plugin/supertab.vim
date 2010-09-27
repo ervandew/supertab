@@ -369,7 +369,11 @@ function! s:SuperTab(command)
 
     if b:complReset
       let b:complReset = 0
-      return "\<c-e>" . complType
+      " not an accurate condition for everyone, but better than sending <c-e>
+      " at the wrong time.
+      if pumvisible()
+        return "\<c-e>" . complType
+      endif
     endif
 
     return complType
