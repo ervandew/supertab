@@ -28,7 +28,7 @@ Supertab                                    *supertab*
     Midword completion                  |supertab-midword|
     Changing default mapping            |supertab-forwardbackward|
     Inserting true tabs                 |supertab-mappingtabliteral|
-    Enhanced longest match support      |supertab-longestenchanced|
+    Enhanced longest match support      |supertab-longestenhanced|
     Preselecting the first entry        |supertab-longesthighlight|
 
 ==============================================================================
@@ -99,7 +99,7 @@ g:SuperTabMappingTabLiteral                 |supertab-mappingtabliteral|
   define the key combination to use to do just that.  By default Ctrl-Tab is
   used.
 
-g:SuperTabLongestEnhanced                   |supertab-longestenchanced|
+g:SuperTabLongestEnhanced                   |supertab-longestenhanced|
   When enabled and 'longest' is in your |completeopt| setting, supertab will
   provide an enhanced longest match support where typing one or more letters
   and hitting tab again while in a completion mode will complete the longest
@@ -305,7 +305,7 @@ something that is supported.  Alternatively, you can escape the <tab> with
 <c-v> (see |i_CTRL-V| for more infos).
 
 
-Enhanced longest match support      *supertab-longestenchanced*
+Enhanced longest match support      *supertab-longestenhanced*
                                     *g:SuperTabLongestEnhanced*
 
 g:SuperTabLongestEnhanced (default value: 0)
