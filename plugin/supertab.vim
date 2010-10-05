@@ -594,7 +594,7 @@ endfunction " }}}
     " using a <c-r> mapping instead of <expr>, seems to prevent evaluating
     " other functions mapped to <cr> etc. (like endwise.vim)
     inoremap <cr> <c-r>=<SID>SelectCompletion()<cr>
-    function s:SelectCompletion()
+    function! s:SelectCompletion()
       return pumvisible() ? "\<space>\<bs>" : "\<cr>"
     endfunction
   endif
