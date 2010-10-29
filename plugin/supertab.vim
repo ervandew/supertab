@@ -607,7 +607,21 @@ endfunction " }}}
     " other functions mapped to <cr> etc. (like endwise.vim)
     inoremap <cr> <c-r>=<SID>SelectCompletion()<cr>
     function! s:SelectCompletion()
-      return pumvisible() ? "\<space>\<bs>" : "\<cr>"
+      " selecting a completion
+      if pumvisible()
+        return "\<space>\<bs>"
+      endif
+
+      " not so pleasant hack to keep <cr> working for abbreviations
+      let word = substitute(getline('.'), '^.*\s\+\(.*\%' . col('.') . 'c\).*', '\1', '')
+      if maparg(word, 'i', 1) != ''
+        call feedkeys("\<c-]>", 't')
+        call feedkeys("\<cr>", 'n')
+        return ''
+      endif
+
+      " keep the <cr> ball rolling for other functions mapped to it.
+      return "\<cr>"
     endfunction
   endif
 " }}}
