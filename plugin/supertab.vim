@@ -472,6 +472,12 @@ endfunction " }}}
 function! s:CaptureKeyPresses()
   if !b:capturing
     let b:capturing = 1
+    " save any previous mappings
+    " TODO: caputure additional info provided by vim 7.3.032 and up.
+    let b:captured = {
+        \ '<bs>': maparg('<bs>', 'i'),
+        \ '<c-h>': maparg('<c-h>', 'i'),
+      \ }
     " TODO: use &keyword to get an accurate list of chars to map
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
       exec 'imap <buffer> ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
@@ -489,9 +495,19 @@ function! s:ReleaseKeyPresses()
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
       exec 'iunmap <buffer> ' . c
     endfor
+
     iunmap <buffer> <bs>
     iunmap <buffer> <c-h>
     exec 'iunmap <buffer> ' . g:SuperTabMappingForward
+
+    " restore any previous mappings
+    for [key, rhs] in items(b:captured)
+      if rhs != ''
+        exec printf('imap %s %s', key, rhs)
+      endif
+    endfor
+    unlet b:captured
+
     if mode() == 'i'
       " force full exit from completion mode (don't exit insert mode since
       " that will break repeating with '.')
