@@ -216,7 +216,7 @@ function! s:Init()
     autocmd FileType <buffer> call <SID>InitBuffer()
   augroup END
 
-  " Setup mechanism to restore orignial completion type upon leaving insert
+  " Setup mechanism to restore original completion type upon leaving insert
   " mode if configured to do so
   if g:SuperTabRetainCompletionDuration == 'insert'
     augroup supertab_retain
@@ -503,7 +503,10 @@ function! s:ReleaseKeyPresses()
     " restore any previous mappings
     for [key, rhs] in items(b:captured)
       if rhs != ''
-        exec printf('imap %s %s', key, rhs)
+        let args = substitute(rhs, '.*\(".\{-}"\).*', '\1', '')
+        let args = substitute(args, '<', '<lt>', 'g')
+        let expr = substitute(rhs, '\(.*\)".\{-}"\(.*\)', '\1%s\2', '')
+        exec printf("imap <silent> %s %s", key, printf(expr, args))
       endif
     endfor
     unlet b:captured
