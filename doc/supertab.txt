@@ -221,7 +221,7 @@ are at the end of the word).
 Leading space completion            *supertab-leadingspace*
                                     *g:SuperTabLeadingSpaceCompletion*
 
-g:SuperTabLeadingSpaceCompletion (default value: 1)
+g:SuperTabLeadingSpaceCompletion (default value: 0)
 
 Sets whether or not completion is enabled when the preceding character is
 whitespace. When enabled, <tab> will kick off completion whenever a non

@@ -87,7 +87,7 @@ set cpo&vim
   endif
 
   if !exists("g:SuperTabLeadingSpaceCompletion")
-    let g:SuperTabLeadingSpaceCompletion = 1
+    let g:SuperTabLeadingSpaceCompletion = 0
   endif
 
   if !exists("g:SuperTabMappingForward")
