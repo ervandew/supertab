@@ -622,10 +622,12 @@ endfunction " }}}
   inoremap <c-p> <c-r>=<SID>SuperTab('p')<cr>
 
   if g:SuperTabCrMapping
-    " using a <c-r> mapping instead of <expr>, seems to prevent evaluating
-    " other functions mapped to <cr> etc. (like endwise.vim)
-    inoremap <cr> <c-r>=<SID>SelectCompletion()<cr>
-    function! s:SelectCompletion()
+    if maparg('<CR>','i') =~ '<CR>'
+      exec "inoremap <script> <cr> " . maparg('<cr>', 'i') . "<c-r>=<SID>SelectCompletion(0)<cr>"
+    else
+      inoremap <cr> <c-r>=<SID>SelectCompletion(1)<cr>
+    endif
+    function! s:SelectCompletion(cr)
       " selecting a completion
       if pumvisible()
         return "\<space>\<bs>"
@@ -639,8 +641,9 @@ endfunction " }}}
         return ''
       endif
 
-      " keep the <cr> ball rolling for other functions mapped to it.
-      return "\<cr>"
+      " only return a cr if nothing else is mapped to it since we don't want
+      " to duplicate a cr returned by another mapping.
+      return a:cr ? "\<cr>" : ""
     endfunction
   endif
 " }}}
