@@ -504,9 +504,12 @@ function! s:ReleaseKeyPresses()
     for [key, rhs] in items(b:captured)
       if rhs != ''
         let args = substitute(rhs, '.*\(".\{-}"\).*', '\1', '')
-        let args = substitute(args, '<', '<lt>', 'g')
-        let expr = substitute(rhs, '\(.*\)".\{-}"\(.*\)', '\1%s\2', '')
-        exec printf("imap <silent> %s %s", key, printf(expr, args))
+        if args != rhs
+          let args = substitute(args, '<', '<lt>', 'g')
+          let expr = substitute(rhs, '\(.*\)".\{-}"\(.*\)', '\1%s\2', '')
+          let rhs = printf(expr, args)
+        endif
+        exec printf("imap <silent> %s %s", key, rhs)
       endif
     endfor
     unlet b:captured
