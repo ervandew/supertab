@@ -14,7 +14,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2010
+"   Copyright (c) 2002 - 2011
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -633,7 +633,7 @@ endfunction " }}}
     function! s:SelectCompletion(cr)
       " selecting a completion
       if pumvisible()
-        return "\<space>\<bs>"
+        return "\<c-y>"
       endif
 
       " not so pleasant hack to keep <cr> working for abbreviations
