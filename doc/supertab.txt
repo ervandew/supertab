@@ -15,21 +15,21 @@ supertab.vim for the license in its entirety.
 ==============================================================================
 Supertab                                    *supertab*
 
-1. Introduction                         |supertab-intro|
-2. Supertab Usage                       |supertab-usage|
-3. Supertab Options                     |supertab-options|
-    Default completion type             |supertab-defaultcompletion|
-    Secondary default completion type   |supertab-contextdefault|
-    Completion contexts                 |supertab-completioncontexts|
-        Context text                    |supertab-contexttext|
-        Context Discover                |supertab-contextdiscover|
-        Example                         |supertab-contextexample|
-    Completion Duration                 |supertab-duration|
-    Midword completion                  |supertab-midword|
-    Changing default mapping            |supertab-forwardbackward|
-    Inserting true tabs                 |supertab-mappingtabliteral|
-    Enhanced longest match support      |supertab-longestenhanced|
-    Preselecting the first entry        |supertab-longesthighlight|
+1. Introduction                             |supertab-intro|
+2. Supertab Usage                           |supertab-usage|
+3. Supertab Options                         |supertab-options|
+    Default completion type                 |supertab-defaultcompletion|
+    Secondary default completion type       |supertab-contextdefault|
+    Completion contexts                     |supertab-completioncontexts|
+        Context text                        |supertab-contexttext|
+        Context Discover                    |supertab-contextdiscover|
+        Example                             |supertab-contextexample|
+    Completion Duration                     |supertab-duration|
+    Preventing Completion After/Before...   |supertab-preventcomplete|
+    Changing default mapping                |supertab-forwardbackward|
+    Inserting true tabs                     |supertab-mappingtabliteral|
+    Enhanced longest match support          |supertab-longestenhanced|
+    Preselecting the first entry            |supertab-longesthighlight|
 
 ==============================================================================
 1. Introduction                             *supertab-intro*
@@ -206,29 +206,24 @@ The possible values include:
                mode.
 
 
-Midword completion                  *supertab-midword*
-                                    *g:SuperTabMidWordCompletion*
+Preventing completion after...      *supertab-preventcomplete*
+                                    *g:SuperTabNoCompleteBefore*
+                                    *g:SuperTabNoCompleteAfter*
 
-g:SuperTabMidWordCompletion (default value: 1)
+g:SuperTabNoCompleteBefore (default value: [])
+g:SuperTabNoCompleteAfter (default value: ['\s'])
 
-Sets whether or not mid word completion is enabled. When enabled, <tab> will
-kick off completion whenever a non whitespace character is to the left of the
-cursor.  When disabled, completion will only occur if the char to the left is
-non whitespace char and the char to the right is not a keyword character (you
-are at the end of the word).
+These two variables are used to control when supertab will attempt completion
+or instead fall back to inserting a literal <tab>, by specifying a list of
+patterns which are tested against the text before and after the current cursor
+position that when matched, prevent completion. So if you don't want supertab
+to start completion after a comma or space, you can set
+g:SuperTabNoCompleteAfter to [',', '\s'].
 
-
-Leading space completion            *supertab-leadingspace*
-                                    *g:SuperTabLeadingSpaceCompletion*
-
-g:SuperTabLeadingSpaceCompletion (default value: 0)
-
-Sets whether or not completion is enabled when the preceding character is
-whitespace. When enabled, <tab> will kick off completion whenever a non
-whitespace character is anywhere to the left of the cursor, even if the cursor
-is currently preceded by whitespace.  When disabled, completion will only
-occur if the char to the left is a non whitespace char.
-
+Note: That a buffer local version of these variables
+(b:SuperTabNoCompleteBefore, b:SuperTabNoCompleteAfter) is also supported
+should you wish to have different values depending on the file type for
+instance.
 
 Changing the default mapping        *supertab-forwardbackward*
                                     *g:SuperTabMappingForward*
