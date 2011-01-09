@@ -641,14 +641,29 @@ endfunction " }}}
 
   if g:SuperTabCrMapping
     if maparg('<CR>','i') =~ '<CR>'
-      exec "inoremap <script> <cr> " . maparg('<cr>', 'i') . "<c-r>=<SID>SelectCompletion(0)<cr>"
+      let map = maparg('<cr>', 'i')
+      let cr = (map =~? '\(^\|[^)]\)<cr>')
+      if map =~ '<Plug>'
+        let plug = substitute(map, '.\{-}\(<Plug>\w\+\).*', '\1', '')
+        let plug_map = maparg(plug, 'i')
+        let map = substitute(map, '.\{-}\(<Plug>\w\+\).*', plug_map, '')
+      endif
+      exec "inoremap <script> <cr> <c-r>=<SID>SelectCompletion(" . cr . ")<cr>" . map
     else
       inoremap <cr> <c-r>=<SID>SelectCompletion(1)<cr>
     endif
     function! s:SelectCompletion(cr)
       " selecting a completion
       if pumvisible()
+        " ugly hack to let other <cr> mappings for other plugins cooperate
+        " with supertab
+        let b:supertab_pumwasvisible = 1
         return "\<c-y>"
+      endif
+
+      if exists('b:supertab_pumwasvisible')
+        unlet b:supertab_pumwasvisible
+        return ''
       endif
 
       " not so pleasant hack to keep <cr> working for abbreviations
