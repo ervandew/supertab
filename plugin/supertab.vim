@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 1.2
+" Version: 1.3
 " GetLatestVimScripts: 1643 1 :AutoInstall: supertab.vim
 "
 " Description: {{{
@@ -439,6 +439,10 @@ endfunction " }}}
 " s:WillComplete() {{{
 " Determines if completion should be kicked off at the current location.
 function! s:WillComplete()
+  if pumvisible()
+    return 1
+  endif
+
   let line = getline('.')
   let cnum = col('.')
 
