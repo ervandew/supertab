@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 1.3
+" Version: 1.4
 " GetLatestVimScripts: 1643 1 :AutoInstall: supertab.vim
 "
 " Description: {{{
@@ -182,6 +182,7 @@ endfunction " }}}
 " restore SuperTab default:
 "   nmap <F6> :call SetSuperTabCompletionType("<c-p>")<cr>
 function! SuperTabSetCompletionType(type)
+  call s:InitBuffer()
   exec "let b:complType = \"" . escape(a:type, '<') . "\""
 endfunction " }}}
 
@@ -227,7 +228,7 @@ endfunction " }}}
 " s:InitBuffer {{{
 " Per buffer initilization.
 function! s:InitBuffer()
-  if exists('b:complType')
+  if exists('b:SuperTabNoCompleteBefore')
     return
   endif
 
