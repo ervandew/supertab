@@ -476,7 +476,7 @@ endfunction " }}}
 
 " s:CaptureKeyPresses() {{{
 function! s:CaptureKeyPresses()
-  if !b:capturing
+  if !exists('b:capturing') || !b:capturing
     let b:capturing = 1
     " save any previous mappings
     " TODO: capture additional info provided by vim 7.3.032 and up.
