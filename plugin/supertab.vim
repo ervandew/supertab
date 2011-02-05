@@ -233,6 +233,7 @@ function! s:InitBuffer()
   endif
 
   let b:complReset = 0
+  let b:complTypeManual = !exists('b:complTypeManual') ? '' : b:complTypeManual
   let b:complTypeContext = ''
   let b:capturing = 0
 
@@ -267,6 +268,8 @@ function! s:ManualCompletionEnter()
     else
       let complType = "\<c-x>" . complType
     endif
+
+    let b:complTypeManual = complType
 
     if index(['insert', 'session'], g:SuperTabRetainCompletionDuration) != -1
       let b:complType = complType
@@ -329,34 +332,43 @@ function! s:SuperTab(command)
       call feedkeys(key)
     endif
 
+    if !pumvisible()
+      let b:complTypeManual = ''
+    endif
+
     " exception: if in <c-p> mode, then <c-n> should move up the list, and
     " <c-p> down the list.
     if a:command == 'p' && !b:complReset &&
       \ (b:complType == "\<c-p>" ||
       \   (b:complType == 'context' &&
-      \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-p>'))
+      \    b:complTypeManual == '' &&
+      \    b:complTypeContext == "\<c-p>"))
       return "\<c-n>"
 
     elseif a:command == 'p' && !b:complReset &&
       \ (b:complType == "\<c-n>" ||
       \   (b:complType == 'context' &&
-      \    tolower(g:SuperTabContextDefaultCompletionType) == '<c-n>'))
+      \    b:complTypeManual == '' &&
+      \    b:complTypeContext == "\<c-n>"))
       return "\<c-p>"
 
     " this used to handle call from captured keys with the longest enhancement
     " enabled, but also must work when the enhancement is disabled.
-    elseif a:command == 'n' && pumvisible() && !b:complReset
+    elseif pumvisible() && !b:complReset
       if b:complType == 'context'
         exec "let contextDefault = \"" .
           \ escape(g:SuperTabContextDefaultCompletionType, '<') . "\""
         " if we are in another completion mode, just scroll to the next
         " completion
         if b:complTypeContext != contextDefault
-          return "\<c-n>"
+          return a:command == 'n' ? "\<c-n>" : "\<c-p>"
         endif
         return contextDefault
       endif
-      return b:complType == "\<c-p>" ? b:complType : "\<c-n>"
+      if a:command == 'n'
+        return b:complType == "\<c-p>" ? "\<c-p>" : "\<c-n>"
+      endif
+      return b:complType == "\<c-p>" ? "\<c-n>" : "\<c-p>"
     endif
 
     " handle 'context' completion.
