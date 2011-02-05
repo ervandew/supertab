@@ -630,17 +630,23 @@ endfunction " }}}
 
   imap <c-x> <c-r>=<SID>ManualCompletionEnter()<cr>
 
-  " From the doc |insert.txt| improved
-  exec 'imap ' . g:SuperTabMappingForward . ' <c-n>'
-  exec 'imap ' . g:SuperTabMappingBackward . ' <c-p>'
+  imap <script> <Plug>SuperTabForward <c-r>=<SID>SuperTab('n')<cr>
+  imap <script> <Plug>SuperTabBackward <c-r>=<SID>SuperTab('p')<cr>
+
+  exec 'imap ' . g:SuperTabMappingForward . ' <Plug>SuperTabForward'
+  exec 'imap ' . g:SuperTabMappingBackward . ' <Plug>SuperTabBackward'
 
   " After hitting <Tab>, hitting it once more will go to next match
   " (because in XIM mode <c-n> and <c-p> mappings are ignored)
   " and wont start a brand new completion
   " The side effect, that in the beginning of line <c-n> and <c-p> inserts a
   " <Tab>, but I hope it may not be a problem...
-  inoremap <c-n> <c-r>=<SID>SuperTab('n')<cr>
-  inoremap <c-p> <c-r>=<SID>SuperTab('p')<cr>
+  if maparg('<c-n>', 'i') == ''
+    imap <c-n> <Plug>SuperTabForward
+  endif
+  if maparg('<c-p>', 'i') == ''
+    imap <c-p> <Plug>SuperTabBackward
+  endif
 
   if g:SuperTabCrMapping
     if maparg('<CR>','i') =~ '<CR>'
