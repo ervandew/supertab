@@ -208,7 +208,7 @@ function! SuperTabAlternateCompletion(type)
   " vim into keyword completion mode and end that mode to prevent the regular
   " insert behavior of <c-e> from occurring.
   call feedkeys("\<c-x>\<c-p>\<c-e>", 'n')
-  call feedkeys(b:complType)
+  call feedkeys(b:complType, 'n')
   return ''
 endfunction " }}}
 
