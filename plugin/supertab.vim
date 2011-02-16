@@ -235,7 +235,6 @@ function! s:InitBuffer()
   let b:complReset = 0
   let b:complTypeManual = !exists('b:complTypeManual') ? '' : b:complTypeManual
   let b:complTypeContext = ''
-  let b:capturing = 0
 
   " init hack for <c-x><c-v> workaround.
   let b:complCommandLine = 0
@@ -480,7 +479,7 @@ function! s:EnableLongestEnhancement()
   augroup END
 endfunction " }}}
 
-" s:CompletionReset() {{{
+" s:CompletionReset(char) {{{
 function! s:CompletionReset(char)
   let b:complReset = 1
   return a:char
@@ -500,7 +499,7 @@ function! s:CaptureKeyPresses()
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
       exec 'imap <buffer> ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
     endfor
-    imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
+    imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>bs>")<cr>
     imap <buffer> <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
     exec 'imap <buffer> ' . g:SuperTabMappingForward . ' <c-r>=<SID>SuperTab("n")<cr>'
   endif
@@ -508,7 +507,7 @@ endfunction " }}}
 
 " s:ReleaseKeyPresses() {{{
 function! s:ReleaseKeyPresses()
-  if b:capturing
+  if exists('b:capturing') && b:capturing
     let b:capturing = 0
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
       exec 'iunmap <buffer> ' . c
