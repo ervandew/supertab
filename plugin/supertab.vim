@@ -2,7 +2,7 @@
 "   Original: Gergely Kontra <kgergely@mcl.hu>
 "   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
 "   Please direct all correspondence to Eric.
-" Version: 1.5
+" Version: 1.6
 " GetLatestVimScripts: 1643 1 :AutoInstall: supertab.vim
 "
 " Description: {{{
@@ -325,12 +325,6 @@ function! s:SuperTab(command)
       call s:EnableLongestEnhancement()
     endif
 
-    " highlight first result if longest enabled
-    if g:SuperTabLongestHighlight && !pumvisible() && &completeopt =~ 'longest'
-      let key = (b:complType == "\<c-p>") ? b:complType : "\<c-n>"
-      call feedkeys(key)
-    endif
-
     if !pumvisible()
       let b:complTypeManual = ''
     endif
@@ -384,6 +378,14 @@ function! s:SuperTab(command)
       let complType = s:CommandLineCompletion()
     else
       let complType = b:complType
+    endif
+
+    " highlight first result if longest enabled
+    if g:SuperTabLongestHighlight &&
+     \ &completeopt =~ 'longest' &&
+     \ (!pumvisible() || b:complReset)
+      let key = (complType == "\<c-p>") ? "\<up>" : "\<down>"
+      call feedkeys(key, 'n')
     endif
 
     if b:complReset
