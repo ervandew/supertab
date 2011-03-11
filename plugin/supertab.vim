@@ -477,8 +477,8 @@ function! s:EnableLongestEnhancement()
     autocmd!
     autocmd InsertLeave,CursorMovedI <buffer>
       \ call s:ReleaseKeyPresses() | autocmd! supertab_reset
-    call s:CaptureKeyPresses()
   augroup END
+  call s:CaptureKeyPresses()
 endfunction " }}}
 
 " s:CompletionReset(char) {{{
@@ -533,7 +533,7 @@ function! s:ReleaseKeyPresses()
     endfor
     unlet b:captured
 
-    if mode() == 'i'
+    if mode() == 'i' && &completeopt =~ 'menu'
       " force full exit from completion mode (don't exit insert mode since
       " that will break repeating with '.')
       call feedkeys("\<space>\<bs>", 'n')
