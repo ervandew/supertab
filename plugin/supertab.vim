@@ -503,7 +503,6 @@ function! s:CaptureKeyPresses()
     endfor
     imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>bs>")<cr>
     imap <buffer> <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
-    exec 'imap <buffer> ' . g:SuperTabMappingForward . ' <c-r>=<SID>SuperTab("n")<cr>'
   endif
 endfunction " }}}
 
@@ -517,7 +516,6 @@ function! s:ReleaseKeyPresses()
 
     iunmap <buffer> <bs>
     iunmap <buffer> <c-h>
-    exec 'iunmap <buffer> ' . g:SuperTabMappingForward
 
     " restore any previous mappings
     for [key, rhs] in items(b:captured)
