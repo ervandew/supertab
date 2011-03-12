@@ -212,6 +212,16 @@ function! SuperTabAlternateCompletion(type)
   return ''
 endfunction " }}}
 
+" SuperTabLongestHighlight(dir) {{{
+" When longest highlight is enabled, this function is used to do the actual
+" selection of the completion popup entry.
+function! SuperTabLongestHighlight(dir)
+  if !pumvisible()
+    return ''
+  endif
+  return a:dir == -1 ? "\<up>" : "\<down>"
+endfunction " }}}
+
 " s:Init {{{
 " Global initilization when supertab is loaded.
 function! s:Init()
@@ -282,6 +292,14 @@ function! s:ManualCompletionEnter()
     " optionally enable enhanced longest completion
     if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
       call s:EnableLongestEnhancement()
+    endif
+
+    if g:SuperTabLongestHighlight &&
+     \ &completeopt =~ 'longest' &&
+     \ &completeopt =~ 'menu' &&
+     \ !pumvisible()
+      let dir = (complType == "\<c-x>\<c-p>") ? -1 : 1
+      call feedkeys("\<c-r>=SuperTabLongestHighlight(" . dir . ")\<cr>", 'n')
     endif
 
     return complType
@@ -383,9 +401,10 @@ function! s:SuperTab(command)
     " highlight first result if longest enabled
     if g:SuperTabLongestHighlight &&
      \ &completeopt =~ 'longest' &&
+     \ &completeopt =~ 'menu' &&
      \ (!pumvisible() || b:complReset)
-      let key = (complType == "\<c-p>") ? "\<up>" : "\<down>"
-      call feedkeys(key, 'n')
+      let dir = (complType == "\<c-p>") ? -1 : 1
+      call feedkeys("\<c-r>=SuperTabLongestHighlight(" . dir . ")\<cr>", 'n')
     endif
 
     if b:complReset
