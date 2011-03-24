@@ -707,7 +707,9 @@ endfunction " }}}
         return "\<c-y>"
       endif
 
-      if exists('b:supertab_pumwasvisible')
+      " only needed when chained with other mappings and one of them will
+      " issue a <cr>.
+      if exists('b:supertab_pumwasvisible') && !a:cr
         unlet b:supertab_pumwasvisible
         return ''
       endif
