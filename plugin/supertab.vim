@@ -335,6 +335,10 @@ endfunction " }}}
 " previous entry in a completion list, and determines whether or not to simply
 " retain the normal usage of <tab> based on the cursor position.
 function! s:SuperTab(command)
+  if exists('b:SuperTabDisabled') && b:SuperTabDisabled
+    return "\<tab>"
+  endif
+
   call s:InitBuffer()
 
   if s:WillComplete()
