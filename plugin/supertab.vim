@@ -260,6 +260,16 @@ function! s:InitBuffer()
 
   " set the current completion type to the default
   call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
+
+  " hack to programatically revert a change to snipmate that breaks supertab
+  " but which the new maintainers don't care about:
+  " http://github.com/garbas/vim-snipmate/issues/37
+  let snipmate = string(maparg('<tab>', 'i'))
+  if snipmate =~ '<C-G>u' && g:SuperTabMappingForward =~? '<tab>'
+    let snipmate = substitute(snipmate, '<C-G>u', '', '')
+    iunmap <tab>
+    exec "inoremap <silent> <tab> <c-r>=TriggerSnippet()<cr>"
+  endif
 endfunction " }}}
 
 " s:ManualCompletionEnter() {{{
