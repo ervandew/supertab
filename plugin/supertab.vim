@@ -268,7 +268,7 @@ function! s:InitBuffer()
   if snipmate =~ '<C-G>u' && g:SuperTabMappingForward =~? '<tab>'
     let snipmate = substitute(snipmate, '<C-G>u', '', '')
     iunmap <tab>
-    exec "inoremap <silent> <tab> <c-r>=TriggerSnippet()<cr>"
+    exec "inoremap <silent> <tab> <c-r>=snipMate#TriggerSnippet()<cr>"
   endif
 endfunction " }}}
 
