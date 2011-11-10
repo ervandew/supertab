@@ -304,4 +304,13 @@ g:SuperTabCrMapping (default value: 1)
 
 When enabled, <cr> will cancel completion mode preserving the current text.
 
+
+Close the preview window on <cr>    *supertab-crclosepreview*
+                                    *g:SuperTabCrClosePreview*
+
+g:SuperTabCrClosePreview (default value: 0)
+
+When enabled, <cr> will close the completion preview window if open. Note,
+|g:SuperTabCrMapping| must also be enabled.
+
 vim:tw=78:ts=8:ft=help:norl:

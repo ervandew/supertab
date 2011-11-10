@@ -123,6 +123,10 @@ set cpo&vim
     let g:SuperTabCrMapping = 1
   endif
 
+  if !exists("g:SuperTabCrClosePreview")
+    let g:SuperTabCrClosePreview = 0
+  endif
+
 " }}}
 
 " Script Variables {{{
@@ -709,6 +713,21 @@ endfunction " }}}
         " ugly hack to let other <cr> mappings for other plugins cooperate
         " with supertab
         let b:supertab_pumwasvisible = 1
+
+        " close the preview window if configured to do so
+        if &completeopt =~ 'preview' && g:SuperTabCrClosePreview
+          let preview = 0
+          for bufnum in tabpagebuflist()
+            if getwinvar(bufwinnr(bufnum), '&previewwindow')
+              let preview = 1
+              break
+            endif
+          endfor
+          if preview
+            pclose
+          endif
+        endif
+
         return "\<c-y>"
       endif
 
