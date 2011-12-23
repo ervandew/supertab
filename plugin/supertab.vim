@@ -260,7 +260,9 @@ function! s:InitBuffer()
     let b:SuperTabNoCompleteAfter = g:SuperTabNoCompleteAfter
   endif
 
-  let b:SuperTabDefaultCompletionType = g:SuperTabDefaultCompletionType
+  if !exists('b:SuperTabDefaultCompletionType')
+    let b:SuperTabDefaultCompletionType = g:SuperTabDefaultCompletionType
+  endif
 
   " set the current completion type to the default
   call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
