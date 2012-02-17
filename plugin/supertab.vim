@@ -14,7 +14,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2011
+"   Copyright (c) 2002 - 2012
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -742,10 +742,15 @@ endfunction " }}}
 
       " not so pleasant hack to keep <cr> working for abbreviations
       let word = substitute(getline('.'), '^.*\s\+\(.*\%' . col('.') . 'c\).*', '\1', '')
-      if maparg(word, 'i', 1) != ''
-        call feedkeys("\<c-]>", 't')
-        call feedkeys("\<cr>", 'n')
-        return ''
+      let result = maparg(word, 'i', 1)
+      if result != ''
+        let bs = ""
+        let i = 0
+        while i < len(word)
+          let bs .= "\<bs>"
+          let i += 1
+        endwhile
+        return bs . result . (a:cr ? "\<cr>" : "")
       endif
 
       " only return a cr if nothing else is mapped to it since we don't want
