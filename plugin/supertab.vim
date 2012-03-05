@@ -338,8 +338,7 @@ function! s:SetCompletionType()
   endif
 endfunction " }}}
 
-" s:SetDefaultCompletionType() {{{
-function! s:SetDefaultCompletionType()
+function! s:SetDefaultCompletionType() " {{{
   if exists('b:SuperTabDefaultCompletionType') &&
   \ (!exists('b:complCommandLine') || !b:complCommandLine)
     call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
@@ -501,8 +500,7 @@ function! s:WillComplete()
   return 1
 endfunction " }}}
 
-" s:EnableLongestEnhancement() {{{
-function! s:EnableLongestEnhancement()
+function! s:EnableLongestEnhancement() " {{{
   augroup supertab_reset
     autocmd!
     autocmd InsertLeave,CursorMovedI <buffer>
@@ -511,14 +509,12 @@ function! s:EnableLongestEnhancement()
   call s:CaptureKeyPresses()
 endfunction " }}}
 
-" s:CompletionReset(char) {{{
-function! s:CompletionReset(char)
+function! s:CompletionReset(char) " {{{
   let b:complReset = 1
   return a:char
 endfunction " }}}
 
-" s:CaptureKeyPresses() {{{
-function! s:CaptureKeyPresses()
+function! s:CaptureKeyPresses() " {{{
   if !exists('b:capturing') || !b:capturing
     let b:capturing = 1
     " save any previous mappings
@@ -536,8 +532,7 @@ function! s:CaptureKeyPresses()
   endif
 endfunction " }}}
 
-" s:ReleaseKeyPresses() {{{
-function! s:ReleaseKeyPresses()
+function! s:ReleaseKeyPresses() " {{{
   if exists('b:capturing') && b:capturing
     let b:capturing = 0
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
@@ -582,8 +577,7 @@ function! s:CommandLineCompletion()
     \ "let b:complCommandLine = 0\<cr>"
 endfunction " }}}
 
-" s:ContextCompletion() {{{
-function! s:ContextCompletion()
+function! s:ContextCompletion() " {{{
   let contexts = exists('b:SuperTabCompletionContexts') ?
     \ b:SuperTabCompletionContexts : g:SuperTabCompletionContexts
 
@@ -604,8 +598,7 @@ function! s:ContextCompletion()
   return ''
 endfunction " }}}
 
-" s:ContextDiscover() {{{
-function! s:ContextDiscover()
+function! s:ContextDiscover() " {{{
   let discovery = exists('g:SuperTabContextDiscoverDiscovery') ?
     \ g:SuperTabContextDiscoverDiscovery : []
 
@@ -623,8 +616,7 @@ function! s:ContextDiscover()
   endif
 endfunction " }}}
 
-" s:ContextText() {{{
-function! s:ContextText()
+function! s:ContextText() " {{{
   let exclusions = exists('g:SuperTabContextTextFileTypeExclusions') ?
     \ g:SuperTabContextTextFileTypeExclusions : []
 
@@ -653,8 +645,7 @@ function! s:ContextText()
   endif
 endfunction " }}}
 
-" s:ExpandMap(map) {{{
-function! s:ExpandMap(map)
+function! s:ExpandMap(map) " {{{
   let map = a:map
   if map =~ '<Plug>'
     let plug = substitute(map, '.\{-}\(<Plug>\w\+\).*', '\1', '')
