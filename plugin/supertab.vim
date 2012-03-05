@@ -123,8 +123,8 @@ set cpo&vim
     let g:SuperTabCrMapping = 1
   endif
 
-  if !exists("g:SuperTabCrClosePreview")
-    let g:SuperTabCrClosePreview = 0
+  if !exists("g:SuperTabClosePreviewOnPopupClose")
+    let g:SuperTabClosePreviewOnPopupClose = 0
   endif
 
 " }}}
@@ -286,6 +286,8 @@ function! s:ManualCompletionEnter()
   endif
   let complType = nr2char(getchar())
   if stridx(s:types, complType) != -1
+    let b:supertab_close_preview = 1
+
     if stridx("\<c-e>\<c-y>", complType) != -1 " no memory, just scroll...
       return "\<c-x>" . complType
     elseif stridx('np', complType) != -1
@@ -357,6 +359,8 @@ function! s:SuperTab(command)
   call s:InitBuffer()
 
   if s:WillComplete()
+    let b:supertab_close_preview = 1
+
     " optionally enable enhanced longest completion
     if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
       call s:EnableLongestEnhancement()
@@ -532,6 +536,22 @@ function! s:CaptureKeyPresses() " {{{
   endif
 endfunction " }}}
 
+function! s:ClosePreview() " {{{
+  if exists('b:supertab_close_preview') && b:supertab_close_preview
+    let preview = 0
+    for bufnum in tabpagebuflist()
+      if getwinvar(bufwinnr(bufnum), '&previewwindow')
+        let preview = 1
+        break
+      endif
+    endfor
+    if preview
+      pclose
+    endif
+    unlet b:supertab_close_preview
+  endif
+endfunction " }}}
+
 function! s:ReleaseKeyPresses() " {{{
   if exists('b:capturing') && b:capturing
     let b:capturing = 0
@@ -655,6 +675,15 @@ function! s:ExpandMap(map) " {{{
   return map
 endfunction " }}}
 
+" Autocmds {{{
+  if g:SuperTabClosePreviewOnPopupClose
+    augroup supertab_close_preview
+      autocmd!
+      autocmd InsertLeave,CursorMovedI * call s:ClosePreview()
+    augroup END
+  endif
+" }}}
+
 " Key Mappings {{{
   " map a regular tab to ctrl-tab (note: doesn't work in console vim)
   exec 'inoremap ' . g:SuperTabMappingTabLiteral . ' <tab>'
@@ -708,17 +737,9 @@ endfunction " }}}
         let b:supertab_pumwasvisible = 1
 
         " close the preview window if configured to do so
-        if &completeopt =~ 'preview' && g:SuperTabCrClosePreview
-          let preview = 0
-          for bufnum in tabpagebuflist()
-            if getwinvar(bufwinnr(bufnum), '&previewwindow')
-              let preview = 1
-              break
-            endif
-          endfor
-          if preview
-            pclose
-          endif
+        if &completeopt =~ 'preview' && g:SuperTabClosePreviewOnPopupClose
+          let b:supertab_close_preview = 1
+          call s:ClosePreview()
         endif
 
         return "\<c-y>"
