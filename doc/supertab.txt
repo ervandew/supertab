@@ -306,7 +306,7 @@ When enabled, <cr> will cancel completion mode preserving the current text.
 
 Compatibility with other plugins:
   - endwise:     compatible
-  - delimitMate: not compatible (disabled if the delimitMat <cr> mapping is
+  - delimitMate: not compatible (disabled if the delimitMate <cr> mapping is
     detected.)
 
 
