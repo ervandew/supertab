@@ -721,7 +721,11 @@ endfunction " }}}
   endfunction
 
   if g:SuperTabCrMapping
-    if maparg('<CR>','i') =~ '<CR>'
+    if maparg('<CR>','i') =~ '<Plug>delimitMateCR'
+      " Not compatible w/ delimitMate since it doesn't play well with others
+      " and will always return a <cr> which we don't when selecting a
+      " completion.
+    elseif maparg('<CR>','i') =~ '<CR>'
       let map = maparg('<cr>', 'i')
       let cr = (map =~? '\(^\|[^)]\)<cr>')
       let map = s:ExpandMap(map)

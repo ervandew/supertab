@@ -304,6 +304,11 @@ g:SuperTabCrMapping (default value: 1)
 
 When enabled, <cr> will cancel completion mode preserving the current text.
 
+Compatibility with other plugins:
+  - endwise:     compatible
+  - delimitMate: not compatible (disabled if the delimitMat <cr> mapping is
+    detected.)
+
 
 Close the preview window on <cr>    *supertab-rclosepreviewonpopupclose*
                                     *g:SuperTabClosePreviewOnPopupClose*
