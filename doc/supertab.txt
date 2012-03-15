@@ -30,6 +30,8 @@ Supertab                                    *supertab*
     Inserting true tabs                     |supertab-mappingtabliteral|
     Enhanced longest match support          |supertab-longestenhanced|
     Preselecting the first entry            |supertab-longesthighlight|
+    Mapping <cr> to end completion          |supertab-crmapping|
+    Auto close the preview window           |supertab-closepreviewonpopupclose|
 
 ==============================================================================
 1. Introduction                             *supertab-intro*
@@ -310,7 +312,7 @@ Compatibility with other plugins:
     detected.)
 
 
-Close the preview window on <cr>    *supertab-rclosepreviewonpopupclose*
+Auto close the preview window       *supertab-closepreviewonpopupclose*
                                     *g:SuperTabClosePreviewOnPopupClose*
 
 g:SuperTabClosePreviewOnPopupClose (default value: 0)
