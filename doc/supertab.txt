@@ -343,9 +343,9 @@ Here is an example that can be added to your .vimrc which will setup the
 supertab chaining for any filetype that has a provided |omnifunc| to first
 try that, then fall back to supertab's default, <c-p>, completion:
 
-  let g:SuperTabDefaultCompletionType = '<c-x><c-u>'
   autocmd FileType *
     \ if &omnifunc != '' |
+    \   let g:SuperTabDefaultCompletionType = '<c-x><c-u>' |
     \   call SuperTabChain(&omnifunc, '<c-p>') |
     \ endif
 
