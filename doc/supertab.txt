@@ -32,6 +32,7 @@ Supertab                                    *supertab*
     Preselecting the first entry            |supertab-longesthighlight|
     Mapping <cr> to end completion          |supertab-crmapping|
     Auto close the preview window           |supertab-closepreviewonpopupclose|
+    Completion Chaining                     |supertab-completionchaining|
 
 ==============================================================================
 1. Introduction                             *supertab-intro*
@@ -319,5 +320,38 @@ g:SuperTabClosePreviewOnPopupClose (default value: 0)
 
 When enabled, supertab will attempt to close vim's completion preview window
 when the completion popup closes (completion is finished or canceled).
+
+Completion Chaining                  *supertab-completionchaining*
+
+Note: Experimental
+
+SuperTab provides the ability to chain one of the completion functions
+(|completefunc| or |omnifunc|) together with a one of the default vim
+completion key sequences (|ins-completion|), giving you the ability to attempt
+completion with the first, and upon no results, fall back to the second.
+
+To utilize this feature you need to call the SuperTabChain function where
+the first argument is the name of a vim compatible |complete-function| and the
+second is one of vim's insert completion (|ins-completion|) key bindings
+(<c-p>, <c-n>, <c-x><c-]>, etc). Calling this function will set the current
+buffer's |completefunc| option to a supertab provided implementation which
+utilizes the supplied arguments to perform the completion. Since the
+|completefunc| option is being set, this feature works best when also
+setting |g:SuperTabDefaultCompletionType| to either "context" or "<c-x><c-u>".
+
+Here is an example that can be added to your .vimrc which will setup the
+supertab chaining for any filetype that has a provided |omnifunc| to first
+try that, then fall back to supertab's default, <c-p>, completion:
+
+  let g:SuperTabDefaultCompletionType = '<c-x><c-u>'
+  autocmd FileType *
+    \ if &omnifunc != '' |
+    \   call SuperTabChain(&omnifunc, '<c-p>') |
+    \ endif
+
+Note that this feature does not support chaining any other combination of
+completions (2 or more completion functions, 2 or more key bindings, etc.). It
+can only support 1 completion function followed by 1 key binding. This is due
+to limitations imposed by vim's code completion implementation.
 
 vim:tw=78:ts=8:ft=help:norl:

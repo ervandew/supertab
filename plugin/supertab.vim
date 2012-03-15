@@ -675,6 +675,71 @@ function! s:ExpandMap(map) " {{{
   return map
 endfunction " }}}
 
+function! SuperTabDelayedCommand(command, ...) " {{{
+  echom 'delay: ' . a:command
+  let uid = fnamemodify(tempname(), ':t:r')
+  if &updatetime > 1
+    exec 'let g:delayed_updatetime_save' . uid . ' = &updatetime'
+  endif
+  exec 'let g:delayed_command' . uid . ' = a:command'
+  let &updatetime = len(a:000) ? a:000[0] : 1
+  exec 'augroup delayed_command' . uid
+    exec 'autocmd CursorHoldI * ' .
+      \ '  if exists("g:delayed_updatetime_save' . uid . '") | ' .
+      \ '    let &updatetime = g:delayed_updatetime_save' . uid . ' | ' .
+      \ '    unlet g:delayed_updatetime_save' . uid . ' | ' .
+      \ '  endif | ' .
+      \ '  exec g:delayed_command' . uid . ' | ' .
+      \ '  unlet g:delayed_command' . uid . ' | ' .
+      \ '  autocmd! delayed_command' . uid
+    " just in case user leaves insert mode before CursorHoldI fires
+    exec 'autocmd CursorHold * ' .
+      \ '  if exists("g:delayed_updatetime_save' . uid . '") | ' .
+      \ '    let &updatetime = g:delayed_updatetime_save' . uid . ' | ' .
+      \ '    unlet g:delayed_updatetime_save' . uid . ' | ' .
+      \ '  endif | ' .
+      \ '  autocmd! delayed_command' . uid
+  exec 'augroup END'
+endfunction " }}}
+
+function! SuperTabChain(completefunc, completekeys) " {{{
+  let b:SuperTabChain = [a:completefunc, a:completekeys]
+  setlocal completefunc=SuperTabCodeComplete
+endfunction " }}}
+
+function! SuperTabCodeComplete(findstart, base) " {{{
+  if !exists('b:SuperTabChain')
+    echoe 'No completion chain has been set.'
+    return -2
+  endif
+
+  if len(b:SuperTabChain) != 2
+    echoe 'Completion chain can only be used with 1 completion function ' .
+        \ 'and 1 fallback completion key binding.'
+    return -2
+  endif
+
+  let Func = function(b:SuperTabChain[0])
+  let keys = escape(b:SuperTabChain[1], '<')
+
+  if a:findstart
+    let start = Func(a:findstart, a:base)
+    if start >= 0
+      return start
+    endif
+
+    return col('.') - 1
+  endif
+
+  let results = Func(a:findstart, a:base)
+  if len(results)
+    return results
+  endif
+
+  call SuperTabDelayedCommand('call feedkeys("' . keys . '", "nt")')
+  return []
+endfunction " }}}
+
 " Autocmds {{{
   if g:SuperTabClosePreviewOnPopupClose
     augroup supertab_close_preview
