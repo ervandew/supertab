@@ -345,8 +345,8 @@ try that, then fall back to supertab's default, <c-p>, completion:
 
   autocmd FileType *
     \ if &omnifunc != '' |
-    \   let g:SuperTabDefaultCompletionType = '<c-x><c-u>' |
-    \   call SuperTabChain(&omnifunc, '<c-p>') |
+    \   call SuperTabChain(&omnifunc, "<c-p>") |
+    \   call SuperTabSetDefaultCompletionType("<c-x><c-u>") |
     \ endif
 
 Note that this feature does not support chaining any other combination of
