@@ -786,9 +786,20 @@ endfunction " }}}
   endfunction
 
   if g:SuperTabCrMapping
-    if maparg('<CR>','i') =~ '<Plug>delimitMateCR'
+    let expr_map = 0
+    try
+      let map_dict = maparg('<cr>', 'i', 0, 1)
+      let expr_map = map_dict.expr
+    catch
+      let expr_map = maparg('<cr>', 'i') =~? '\<cr>'
+    endtry
+
+    if expr_map
+      " Not compatible w/ expr mappings. This is most likely a user mapping,
+      " typically with the same functionality anyways.
+    elseif maparg('<CR>', 'i') =~ '<Plug>delimitMateCR'
       " Not compatible w/ delimitMate since it doesn't play well with others
-      " and will always return a <cr> which we don't when selecting a
+      " and will always return a <cr> which we don't want when selecting a
       " completion.
     elseif maparg('<CR>','i') =~ '<CR>'
       let map = maparg('<cr>', 'i')
