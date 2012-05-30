@@ -1,3 +1,4 @@
 *.swp
 *.vmb
 doc/tags
+/README.html
