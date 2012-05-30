@@ -396,6 +396,13 @@ function! s:SuperTab(command)
       return type == "\<c-p>" ? "\<c-n>" : "\<c-p>"
     endif
 
+    if exists('b:SuperTabChain')
+      let b:SuperTabChainNeedFallback = 0
+      " this check will be done after SuperTabCodeComplete is called
+      let fallback_check = "\<C-r>=b:SuperTabChainNeedFallback ? \"" . escape(b:SuperTabChain[1], '<') .  "\" : \"\"\<CR>"
+      call feedkeys(fallback_check, "nt")
+    endif
+
     " handle 'context' completion.
     if b:complType == 'context'
       let complType = s:ContextCompletion()
@@ -736,7 +743,7 @@ function! SuperTabCodeComplete(findstart, base) " {{{
     return results
   endif
 
-  call SuperTabDelayedCommand('call feedkeys("' . keys . '", "nt")')
+  let b:SuperTabChainNeedFallback = 1
   return []
 endfunction " }}}
 
