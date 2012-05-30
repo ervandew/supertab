@@ -676,7 +676,6 @@ function! s:ExpandMap(map) " {{{
 endfunction " }}}
 
 function! SuperTabDelayedCommand(command, ...) " {{{
-  echom 'delay: ' . a:command
   let uid = fnamemodify(tempname(), ':t:r')
   if &updatetime > 1
     exec 'let g:delayed_updatetime_save' . uid . ' = &updatetime'
