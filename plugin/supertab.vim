@@ -704,6 +704,12 @@ endfunction " }}}
 function! SuperTabChain(completefunc, completekeys) " {{{
   let b:SuperTabChain = [a:completefunc, a:completekeys]
   setlocal completefunc=SuperTabCodeComplete
+  if &completeopt !~ 'menu'
+    set completeopt+=menu
+  endif
+  if &completeopt !~ 'longest'
+    set completeopt+=longest
+  endif
 endfunction " }}}
 
 function! SuperTabCodeComplete(findstart, base) " {{{
