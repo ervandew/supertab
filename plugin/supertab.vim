@@ -704,12 +704,6 @@ endfunction " }}}
 function! SuperTabChain(completefunc, completekeys) " {{{
   let b:SuperTabChain = [a:completefunc, a:completekeys]
   setlocal completefunc=SuperTabCodeComplete
-  if &completeopt !~ 'menu'
-    set completeopt+=menu
-  endif
-  if &completeopt !~ 'longest'
-    set completeopt+=longest
-  endif
 endfunction " }}}
 
 function! SuperTabCodeComplete(findstart, base) " {{{
@@ -725,7 +719,6 @@ function! SuperTabCodeComplete(findstart, base) " {{{
   endif
 
   let Func = function(b:SuperTabChain[0])
-  let keys = escape(b:SuperTabChain[1], '<')
 
   if a:findstart
     let start = Func(a:findstart, a:base)
@@ -741,6 +734,7 @@ function! SuperTabCodeComplete(findstart, base) " {{{
     return results
   endif
 
+  let keys = escape(b:SuperTabChain[1], '<')
   call SuperTabDelayedCommand('call feedkeys("' . keys . '", "nt")')
   return []
 endfunction " }}}
