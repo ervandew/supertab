@@ -323,8 +323,6 @@ when the completion popup closes (completion is finished or canceled).
 
 Completion Chaining                  *supertab-completionchaining*
 
-Note: Experimental
-
 SuperTab provides the ability to chain one of the completion functions
 (|completefunc| or |omnifunc|) together with a one of the default vim
 completion key sequences (|ins-completion|), giving you the ability to attempt
