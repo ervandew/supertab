@@ -1,8 +1,7 @@
-" Author:
-"   Original: Gergely Kontra <kgergely@mcl.hu>
-"   Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
-"   Please direct all correspondence to Eric.
-" Version: 1.6
+" Author: Eric Van Dewoestine <ervandew@gmail.com>
+"         Original concept and versions up to 0.32 written by
+"         Gergely Kontra <kgergely@mcl.hu>
+" Version: 2.0
 " GetLatestVimScripts: 1643 1 :AutoInstall: supertab.vim
 "
 " Description: {{{

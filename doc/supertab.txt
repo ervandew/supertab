@@ -1,13 +1,8 @@
 *supertab.txt*
 
-Authors:
-  Original: Gergely Kontra <kgergely@mcl.hu>
-  Current:  Eric Van Dewoestine <ervandew@gmail.com> (as of version 0.4)
-
-Contributors:
-  Christophe-Marie Duquesne <chm.duquesne@gmail.com> (documentation)
-
-Please direct all correspondence to Eric.
+Author: Eric Van Dewoestine <ervandew@gmail.com>
+        Original concept and versions up to 0.32 written by
+        Gergely Kontra <kgergely@mcl.hu>
 
 This plugin is licensed under the terms of the BSD License.  Please see
 supertab.vim for the license in its entirety.
