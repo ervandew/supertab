@@ -515,6 +515,7 @@ endfunction " }}}
 function! s:CaptureKeyPresses() " {{{
   if !exists('b:capturing') || !b:capturing
     let b:capturing = 1
+    let b:capturing_start = col('.')
     " save any previous mappings
     " TODO: capture additional info provided by vim 7.3.032 and up.
     let b:captured = {
@@ -570,11 +571,12 @@ function! s:ReleaseKeyPresses() " {{{
     endfor
     unlet b:captured
 
-    if mode() == 'i' && &completeopt =~ 'menu'
+    if mode() == 'i' && &completeopt =~ 'menu' && b:capturing_start != col('.')
       " force full exit from completion mode (don't exit insert mode since
       " that will break repeating with '.')
       call feedkeys("\<space>\<bs>", 'n')
     endif
+    unlet b:capturing_start
   endif
 endfunction " }}}
 
