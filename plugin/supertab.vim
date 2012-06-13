@@ -95,7 +95,7 @@ set cpo&vim
     if exists("g:SuperTabLeadingSpaceCompletion") && g:SuperTabLeadingSpaceCompletion
       let g:SuperTabNoCompleteAfter = []
     else
-      let g:SuperTabNoCompleteAfter = ['\s']
+      let g:SuperTabNoCompleteAfter = ['^', '\s']
     endif
   endif
 
@@ -477,11 +477,6 @@ function! s:WillComplete()
 
   let line = getline('.')
   let cnum = col('.')
-
-  " Start of line.
-  if line =~ '^\s*\%' . cnum . 'c'
-    return 0
-  endif
 
   " honor SuperTabNoCompleteAfter
   let pre = line[:cnum - 2]

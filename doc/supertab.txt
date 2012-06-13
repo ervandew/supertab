@@ -209,14 +209,14 @@ Preventing completion after...      *supertab-preventcomplete*
                                     *g:SuperTabNoCompleteAfter*
 
 g:SuperTabNoCompleteBefore (default value: [])
-g:SuperTabNoCompleteAfter (default value: ['\s'])
+g:SuperTabNoCompleteAfter (default value: ['^', '\s'])
 
 These two variables are used to control when supertab will attempt completion
 or instead fall back to inserting a literal <tab>, by specifying a list of
 patterns which are tested against the text before and after the current cursor
 position that when matched, prevent completion. So if you don't want supertab
-to start completion after a comma or space, you can set
-g:SuperTabNoCompleteAfter to [',', '\s'].
+to start completion at the start of a line, after a comma, or after a space,
+you can set g:SuperTabNoCompleteAfter to ['^', ',', '\s'].
 
 Note: That a buffer local version of these variables
 (b:SuperTabNoCompleteBefore, b:SuperTabNoCompleteAfter) is also supported
