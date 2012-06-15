@@ -479,7 +479,7 @@ function! s:WillComplete()
   let cnum = col('.')
 
   " honor SuperTabNoCompleteAfter
-  let pre = line[:cnum - 2]
+  let pre = cnum >= 2 ? line[:cnum - 2] : ''
   for pattern in b:SuperTabNoCompleteAfter
     if pre =~ pattern . '$'
       return 0
