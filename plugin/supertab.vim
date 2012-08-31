@@ -352,7 +352,7 @@ endfunction " }}}
 " retain the normal usage of <tab> based on the cursor position.
 function! s:SuperTab(command)
   if exists('b:SuperTabDisabled') && b:SuperTabDisabled
-    return g:SuperTabMappingForward == '<tab>' ? "\<tab>" : ''
+    return g:SuperTabMappingForward ==? '<tab>' ? "\<tab>" : ''
   endif
 
   call s:InitBuffer()
@@ -432,7 +432,7 @@ function! s:SuperTab(command)
     return complType
   endif
 
-  return g:SuperTabMappingForward == '<tab>' ? "\<tab>" : ''
+  return g:SuperTabMappingForward ==? '<tab>' ? "\<tab>" : ''
 endfunction " }}}
 
 " s:SuperTabHelp() {{{
