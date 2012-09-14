@@ -811,6 +811,10 @@ endfunction " }}}
           let bs .= "\<bs>"
           let i += 1
         endwhile
+        " escape keys
+        let result = substitute(result, '\(<[a-zA-Z][-a-zA-Z]*>\)', '\\\1', 'g')
+        " ensure escaped keys are properly recognized
+        exec 'let result = "' . escape(result, '"') . '"'
         return bs . result . (a:cr ? "\<cr>" : "")
       endif
 
