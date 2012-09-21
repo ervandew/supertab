@@ -60,6 +60,11 @@ if exists('complType') " Integration with other completion functions.
   finish
 endif
 
+if exists("loaded_supertab")
+  finish
+endif
+let loaded_supertab = 1
+
 let s:save_cpo=&cpo
 set cpo&vim
 
