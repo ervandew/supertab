@@ -347,4 +347,9 @@ completions (2 or more completion functions, 2 or more key bindings, etc.). It
 can only support 1 completion function followed by 1 key binding. This is due
 to limitations imposed by vim's code completion implementation.
 
+Note: If the |completefunc| or |omnifunc| use vim's |complete_add()| instead
+of returning completion results as a list, then Supertab's completion chaining
+won't work properly with it since Supertab uses the function result to
+determine if it should fallback to the next completion type.
+
 vim:tw=78:ts=8:ft=help:norl:
