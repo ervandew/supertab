@@ -677,8 +677,10 @@ function! s:ExpandMap(map) " {{{
 endfunction " }}}
 
 function! SuperTabChain(completefunc, completekeys) " {{{
-  let b:SuperTabChain = [a:completefunc, a:completekeys]
-  setlocal completefunc=SuperTabCodeComplete
+  if a:completefunc != 'SuperTabCodeComplete'
+    let b:SuperTabChain = [a:completefunc, a:completekeys]
+    setlocal completefunc=SuperTabCodeComplete
+  endif
 endfunction " }}}
 
 function! SuperTabCodeComplete(findstart, base) " {{{
