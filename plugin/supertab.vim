@@ -131,6 +131,10 @@ set cpo&vim
     let g:SuperTabClosePreviewOnPopupClose = 0
   endif
 
+  if !exists("g:SuperTabMaximizeOnClosePreview")
+    let g:SuperTabMaximizeOnClosePreview = 0
+  endif
+
   if !exists("g:SuperTabUndoBreak")
     let g:SuperTabUndoBreak = 0
   endif
@@ -555,6 +559,9 @@ function! s:ClosePreview() " {{{
     endfor
     if preview
       pclose
+      if g:SuperTabMaximizeOnClosePreview
+        wincmd _
+      endif
     endif
     unlet b:supertab_close_preview
   endif

@@ -27,6 +27,7 @@ Supertab                                    *supertab*
     Preselecting the first entry            |supertab-longesthighlight|
     Mapping <cr> to end completion          |supertab-crmapping|
     Auto close the preview window           |supertab-closepreviewonpopupclose|
+    Maximize window after preview close     |supertab-supertabmaximizeonclosepreview|
     Completion Chaining                     |supertab-completionchaining|
 
 ==============================================================================
@@ -315,6 +316,13 @@ g:SuperTabClosePreviewOnPopupClose (default value: 0)
 
 When enabled, supertab will attempt to close vim's completion preview window
 when the completion popup closes (completion is finished or canceled).
+
+Maximize window after preview close     *supertab-supertabmaximizeonclosepreview*
+                                        *g:SuperTabMaximizeOnClosePreview*
+
+g:SuperTabMaximizeOnClosePreview (default value: 0)
+When enabled, supertab will maximize the current window
+after the preview closes.
 
 Completion Chaining                  *supertab-completionchaining*
 
