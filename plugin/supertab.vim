@@ -131,6 +131,10 @@ set cpo&vim
     let g:SuperTabClosePreviewOnPopupClose = 0
   endif
 
+  if !exists("g:SuperTabUndoBreak")
+    let g:SuperTabUndoBreak = 0
+  endif
+
 " }}}
 
 " Script Variables {{{
@@ -432,6 +436,10 @@ function! s:SuperTab(command)
       if pumvisible()
         return "\<c-e>" . complType
       endif
+    endif
+
+    if g:SuperTabUndoBreak && !pumvisible()
+        return "\<c-g>u" . complType
     endif
 
     return complType
