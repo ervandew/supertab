@@ -169,10 +169,10 @@ set cpo&vim
 
 " }}}
 
-" SuperTabSetDefaultCompletionType(type) {{{
-" Globally available function that users can use to set the default
-" completion type for the current buffer, like in an ftplugin.
-function! SuperTabSetDefaultCompletionType(type)
+function! SuperTabSetDefaultCompletionType(type) " {{{
+  " Globally available function that users can use to set the default
+  " completion type for the current buffer, like in an ftplugin.
+
   " init hack for <c-x><c-v> workaround.
   let b:complCommandLine = 0
 
@@ -182,36 +182,36 @@ function! SuperTabSetDefaultCompletionType(type)
   call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
 endfunction " }}}
 
-" SuperTabSetCompletionType(type) {{{
-" Globally available function that users can use to create mappings to quickly
-" switch completion modes.  Useful when a user wants to restore the default or
-" switch to another mode without having to kick off a completion of that type
-" or use SuperTabHelp.  Note, this function only changes the current
-" completion type, not the default, meaning that the default will still be
-" restored once the configured retension duration has been met (see
-" g:SuperTabRetainCompletionDuration).  To change the default for the current
-" buffer, use SuperTabDefaultCompletionType(type) instead.  Example mapping to
-" restore SuperTab default:
-"   nmap <F6> :call SetSuperTabCompletionType("<c-p>")<cr>
-function! SuperTabSetCompletionType(type)
+function! SuperTabSetCompletionType(type) " {{{
+  " Globally available function that users can use to create mappings to quickly
+  " switch completion modes.  Useful when a user wants to restore the default or
+  " switch to another mode without having to kick off a completion of that type
+  " or use SuperTabHelp.  Note, this function only changes the current
+  " completion type, not the default, meaning that the default will still be
+  " restored once the configured retension duration has been met (see
+  " g:SuperTabRetainCompletionDuration).  To change the default for the current
+  " buffer, use SuperTabDefaultCompletionType(type) instead.  Example mapping to
+  " restore SuperTab default:
+  "   nmap <F6> :call SetSuperTabCompletionType("<c-p>")<cr>
+
   call s:InitBuffer()
   exec "let b:complType = \"" . escape(a:type, '<') . "\""
 endfunction " }}}
 
-" SuperTabAlternateCompletion(type) {{{
-" Function which can be mapped to a key to kick off an alternate completion
-" other than the default.  For instance, if you have 'context' as the default
-" and want to map ctrl+space to issue keyword completion.
-" Note: due to the way vim expands ctrl characters in mappings, you cannot
-" create the alternate mapping like so:
-"    imap <c-space> <c-r>=SuperTabAlternateCompletion("<c-p>")<cr>
-" instead, you have to use \<lt> to prevent vim from expanding the key
-" when creating the mapping.
-"    gvim:
-"      imap <c-space> <c-r>=SuperTabAlternateCompletion("\<lt>c-p>")<cr>
-"    console:
-"      imap <nul> <c-r>=SuperTabAlternateCompletion("\<lt>c-p>")<cr>
-function! SuperTabAlternateCompletion(type)
+function! SuperTabAlternateCompletion(type) " {{{
+  " Function which can be mapped to a key to kick off an alternate completion
+  " other than the default.  For instance, if you have 'context' as the default
+  " and want to map ctrl+space to issue keyword completion.
+  " Note: due to the way vim expands ctrl characters in mappings, you cannot
+  " create the alternate mapping like so:
+  "    imap <c-space> <c-r>=SuperTabAlternateCompletion("<c-p>")<cr>
+  " instead, you have to use \<lt> to prevent vim from expanding the key
+  " when creating the mapping.
+  "    gvim:
+  "      imap <c-space> <c-r>=SuperTabAlternateCompletion("\<lt>c-p>")<cr>
+  "    console:
+  "      imap <nul> <c-r>=SuperTabAlternateCompletion("\<lt>c-p>")<cr>
+
   call SuperTabSetCompletionType(a:type)
   " end any current completion before attempting to start the new one.
   " use feedkeys to prevent possible remapping of <c-e> from causing issues.
@@ -224,19 +224,17 @@ function! SuperTabAlternateCompletion(type)
   return ''
 endfunction " }}}
 
-" SuperTabLongestHighlight(dir) {{{
-" When longest highlight is enabled, this function is used to do the actual
-" selection of the completion popup entry.
-function! SuperTabLongestHighlight(dir)
+function! SuperTabLongestHighlight(dir) " {{{
+  " When longest highlight is enabled, this function is used to do the actual
+  " selection of the completion popup entry.
+
   if !pumvisible()
     return ''
   endif
   return a:dir == -1 ? "\<up>" : "\<down>"
 endfunction " }}}
 
-" s:Init {{{
-" Global initilization when supertab is loaded.
-function! s:Init()
+function! s:Init() " {{{
   " Setup mechanism to restore original completion type upon leaving insert
   " mode if configured to do so
   if g:SuperTabRetainCompletionDuration == 'insert'
@@ -247,9 +245,7 @@ function! s:Init()
   endif
 endfunction " }}}
 
-" s:InitBuffer {{{
-" Per buffer initilization.
-function! s:InitBuffer()
+function! s:InitBuffer() " {{{
   if exists('b:SuperTabNoCompleteBefore')
     return
   endif
@@ -286,9 +282,9 @@ function! s:InitBuffer()
   endif
 endfunction " }}}
 
-" s:ManualCompletionEnter() {{{
-" Handles manual entrance into completion mode.
-function! s:ManualCompletionEnter()
+function! s:ManualCompletionEnter() " {{{
+  " Handles manual entrance into completion mode.
+
   if &smd
     echo '' | echohl ModeMsg | echo '-- ^X++ mode (' . s:modes . ')' | echohl None
   endif
@@ -335,10 +331,10 @@ function! s:ManualCompletionEnter()
   return complType
 endfunction " }}}
 
-" s:SetCompletionType() {{{
-" Sets the completion type based on what the user has chosen from the help
-" buffer.
-function! s:SetCompletionType()
+function! s:SetCompletionType() " {{{
+  " Sets the completion type based on what the user has chosen from the help
+  " buffer.
+
   let chosen = substitute(getline('.'), '.*|\(.*\)|.*', '\1', '')
   if chosen != getline('.')
     let winnr = b:winnr
@@ -355,11 +351,11 @@ function! s:SetDefaultCompletionType() " {{{
   endif
 endfunction " }}}
 
-" s:SuperTab(command) {{{
-" Used to perform proper cycle navigation as the user requests the next or
-" previous entry in a completion list, and determines whether or not to simply
-" retain the normal usage of <tab> based on the cursor position.
-function! s:SuperTab(command)
+function! s:SuperTab(command) " {{{
+  " Used to perform proper cycle navigation as the user requests the next or
+  " previous entry in a completion list, and determines whether or not to simply
+  " retain the normal usage of <tab> based on the cursor position.
+
   if exists('b:SuperTabDisabled') && b:SuperTabDisabled
     return g:SuperTabMappingForward ==? '<tab>' ? "\<tab>" : ''
   endif
@@ -448,9 +444,9 @@ function! s:SuperTab(command)
   return g:SuperTabMappingForward ==? '<tab>' ? "\<tab>" : ''
 endfunction " }}}
 
-" s:SuperTabHelp() {{{
-" Opens a help window where the user can choose a completion type to enter.
-function! s:SuperTabHelp()
+function! s:SuperTabHelp() " {{{
+  " Opens a help window where the user can choose a completion type to enter.
+
   let winnr = winnr()
   if bufwinnr("SuperTabHelp") == -1
     botright split SuperTabHelp
@@ -481,9 +477,9 @@ function! s:SuperTabHelp()
   let b:winnr = winnr
 endfunction " }}}
 
-" s:WillComplete() {{{
-" Determines if completion should be kicked off at the current location.
-function! s:WillComplete()
+function! s:WillComplete() " {{{
+  " Determines if completion should be kicked off at the current location.
+
   if pumvisible()
     return 1
   endif
@@ -593,10 +589,10 @@ function! s:ReleaseKeyPresses() " {{{
   endif
 endfunction " }}}
 
-" s:CommandLineCompletion() {{{
-" Hack needed to account for apparent bug in vim command line mode completion
-" when invoked via <c-r>=
-function! s:CommandLineCompletion()
+function! s:CommandLineCompletion() " {{{
+  " Hack needed to account for apparent bug in vim command line mode completion
+  " when invoked via <c-r>=
+
   " This hack will trigger InsertLeave which will then invoke
   " s:SetDefaultCompletionType.  To prevent default completion from being
   " restored prematurely, set an internal flag for s:SetDefaultCompletionType
