@@ -290,7 +290,9 @@ function! s:ManualCompletionEnter() " {{{
   endif
   let complType = nr2char(getchar())
   if stridx(s:types, complType) != -1
-    let b:supertab_close_preview = 1
+    if !exists('b:supertab_close_preview')
+      let b:supertab_close_preview = !s:IsPreviewOpen()
+    endif
 
     if stridx("\<c-e>\<c-y>", complType) != -1 " no memory, just scroll...
       return "\<c-x>" . complType
@@ -363,7 +365,9 @@ function! s:SuperTab(command) " {{{
   call s:InitBuffer()
 
   if s:WillComplete()
-    let b:supertab_close_preview = 1
+    if !exists('b:supertab_close_preview')
+      let b:supertab_close_preview = !s:IsPreviewOpen()
+    endif
 
     " optionally enable enhanced longest completion
     if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
@@ -540,6 +544,18 @@ function! s:CaptureKeyPresses() " {{{
   endif
 endfunction " }}}
 
+function! s:IsPreviewOpen() " {{{
+  let wins = tabpagewinnr(tabpagenr(), '$')
+  let winnr = 1
+  while winnr <= wins
+    if getwinvar(winnr, '&previewwindow') == 1
+      return 1
+    endif
+    let winnr += 1
+  endwhile
+  return 0
+endfunction " }}}
+
 function! s:ClosePreview() " {{{
   if exists('b:supertab_close_preview') && b:supertab_close_preview
     let preview = 0
@@ -552,8 +568,8 @@ function! s:ClosePreview() " {{{
     if preview
       pclose
     endif
-    unlet b:supertab_close_preview
   endif
+  silent! unlet b:supertab_close_preview
 endfunction " }}}
 
 function! s:ReleaseKeyPresses() " {{{
@@ -798,7 +814,9 @@ endfunction " }}}
 
         " close the preview window if configured to do so
         if &completeopt =~ 'preview' && g:SuperTabClosePreviewOnPopupClose
-          let b:supertab_close_preview = 1
+          if !exists('b:supertab_close_preview')
+            let b:supertab_close_preview = !s:IsPreviewOpen()
+          endif
           call s:ClosePreview()
         endif
 
