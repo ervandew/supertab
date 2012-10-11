@@ -567,6 +567,11 @@ function! s:ClosePreview() " {{{
     endfor
     if preview
       pclose
+      try
+        doautocmd <nomodeline> supertab_preview_closed User <supertab>
+      catch /E216/
+        " ignore: no autocmds defined
+      endtry
     endif
   endif
   silent! unlet b:supertab_close_preview
