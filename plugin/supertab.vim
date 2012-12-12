@@ -674,7 +674,7 @@ function! s:ContextText() " {{{
       \ ((has('win32') || has('win64')) && curline =~ '.*\\\w*\%' . cnum . 'c')
       return "\<c-x>\<c-f>"
 
-    elseif curline =~ '.*\(\w\|[\])]\)\(\.\|::\|->\)\w*\%' . cnum . 'c' &&
+    elseif curline =~ '.*\(\w\|[\])]\)\(\.\|>\?::\|->\)\w*\%' . cnum . 'c' &&
       \ synname !~ '\(String\|Comment\)'
       let omniPrecedence = exists('g:SuperTabContextTextOmniPrecedence') ?
         \ g:SuperTabContextTextOmniPrecedence : ['&completefunc', '&omnifunc']
