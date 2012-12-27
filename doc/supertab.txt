@@ -212,11 +212,18 @@ g:SuperTabNoCompleteBefore (default value: [])
 g:SuperTabNoCompleteAfter (default value: ['^', '\s'])
 
 These two variables are used to control when supertab will attempt completion
-or instead fall back to inserting a literal <tab>, by specifying a list of
-patterns which are tested against the text before and after the current cursor
-position that when matched, prevent completion. So if you don't want supertab
-to start completion at the start of a line, after a comma, or after a space,
-you can set g:SuperTabNoCompleteAfter to ['^', ',', '\s'].
+or instead fall back to inserting a literal <tab>. There are two possible ways
+to define these variables:
+
+  1) by specifying a list of patterns which are tested against the text before 
+  and after the current cursor position that when matched, prevent completion. 
+  So if you don't want supertab to start completion at the start of a line, 
+  after a comma, or after a space, you can set g:SuperTabNoCompleteAfter 
+  to ['^', ',', '\s'].
+
+  2) by specifying a funcref to a global accessible function which expects
+  as parameter the text to be inspected (before or after) and, based on that (or 
+  other factors), it returns 1 if completion must be prevented, 0 otherwise.
 
 Note: That a buffer local version of these variables
 (b:SuperTabNoCompleteBefore, b:SuperTabNoCompleteAfter) is also supported
