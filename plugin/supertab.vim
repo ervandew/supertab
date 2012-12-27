@@ -493,20 +493,34 @@ function! s:WillComplete() " {{{
 
   " honor SuperTabNoCompleteAfter
   let pre = cnum >= 2 ? line[:cnum - 2] : ''
-  for pattern in b:SuperTabNoCompleteAfter
-    if pre =~ pattern . '$'
-      return 0
-    endif
-  endfor
+  let complAfterType = type(b:SuperTabNoCompleteAfter)
+  if complAfterType == 3
+    " the option was provided as a list of patterns
+    for pattern in b:SuperTabNoCompleteAfter
+      if pre =~ pattern . '$'
+        return 0
+      endif
+    endfor
+  elseif complAfterType == 2
+    " the option was provided as a funcref
+    return !b:SuperTabNoCompleteAfter(pre)
+  endif
 
   " honor SuperTabNoCompleteBefore
   " Within a word, but user does not have mid word completion enabled.
   let post = line[cnum - 1:]
-  for pattern in b:SuperTabNoCompleteBefore
-    if post =~ '^' . pattern
-      return 0
-    endif
-  endfor
+  let complBeforeType = type(b:SuperTabNoCompleteBefore)
+  if complBeforeType == 3
+    " a list of patterns
+    for pattern in b:SuperTabNoCompleteBefore
+      if post =~ '^' . pattern
+        return 0
+      endif
+    endfor
+  elseif complBeforeType == 2
+    " the option was provided as a funcref
+    return !b:SuperTabNoCompleteAfter(post)
+  endif
 
   return 1
 endfunction " }}}
