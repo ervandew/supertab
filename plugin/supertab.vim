@@ -519,7 +519,7 @@ function! s:WillComplete() " {{{
     endfor
   elseif complBeforeType == 2
     " the option was provided as a funcref
-    return !b:SuperTabNoCompleteAfter(post)
+    return !b:SuperTabNoCompleteBefore(post)
   endif
 
   return 1
