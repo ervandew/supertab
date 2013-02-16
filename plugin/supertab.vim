@@ -879,6 +879,10 @@ endfunction " }}}
   endif
 " }}}
 
+fu! supertab#call(func, ...)
+	retu call(a:func, a:000)
+endf
+
 call s:Init()
 
 function! TestSuperTabCodeComplete(findstart, base) " {{{
