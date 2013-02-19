@@ -13,7 +13,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2012
+"   Copyright (c) 2002 - 2013
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -353,7 +353,7 @@ function! s:SetDefaultCompletionType() " {{{
   endif
 endfunction " }}}
 
-function! s:SuperTab(command) " {{{
+function! SuperTab(command) " {{{
   " Used to perform proper cycle navigation as the user requests the next or
   " previous entry in a completion list, and determines whether or not to simply
   " retain the normal usage of <tab> based on the cursor position.
@@ -770,8 +770,8 @@ endfunction " }}}
 
   imap <c-x> <c-r>=<SID>ManualCompletionEnter()<cr>
 
-  imap <script> <Plug>SuperTabForward <c-r>=<SID>SuperTab('n')<cr>
-  imap <script> <Plug>SuperTabBackward <c-r>=<SID>SuperTab('p')<cr>
+  imap <script> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
+  imap <script> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
 
   exec 'imap ' . g:SuperTabMappingForward . ' <Plug>SuperTabForward'
   exec 'imap ' . g:SuperTabMappingBackward . ' <Plug>SuperTabBackward'
@@ -797,7 +797,7 @@ endfunction " }}}
   endif
   function! s:ForwardBack(command, map)
     exec "let map = \"" . escape(a:map, '<') . "\""
-    return pumvisible() ? s:SuperTab(a:command) : map
+    return pumvisible() ? SuperTab(a:command) : map
   endfunction
 
   if g:SuperTabCrMapping
