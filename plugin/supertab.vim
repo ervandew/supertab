@@ -804,7 +804,7 @@ endfunction " }}}
     let expr_map = 0
     if v:version > 703 || (v:version == 703 && has('patch32'))
       let map_dict = maparg('<cr>', 'i', 0, 1)
-      let expr_map = map_dict.expr
+      let expr_map = has_key(map_dict, 'expr') && map_dict.expr
     else
       let expr_map = maparg('<cr>', 'i') =~? '\<cr>'
     endif
