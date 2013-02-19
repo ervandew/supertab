@@ -802,12 +802,12 @@ endfunction " }}}
 
   if g:SuperTabCrMapping
     let expr_map = 0
-    try
+    if v:version > 703 || (v:version == 703 && has('patch32'))
       let map_dict = maparg('<cr>', 'i', 0, 1)
       let expr_map = map_dict.expr
-    catch
+    else
       let expr_map = maparg('<cr>', 'i') =~? '\<cr>'
-    endtry
+    endif
 
     if expr_map
       " Not compatible w/ expr mappings. This is most likely a user mapping,
