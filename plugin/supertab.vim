@@ -48,7 +48,7 @@
 " }}}
 "
 " Testing Info: {{{
-"   Running vim + supertab with the absolute bar minimum settings:
+"   Running vim + supertab with the absolute bare minimum settings:
 "     $ vim -u NONE -U NONE -c "set nocp | runtime plugin/supertab.vim"
 " }}}
 
