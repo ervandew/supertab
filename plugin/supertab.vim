@@ -459,13 +459,10 @@ function! s:SuperTabHelp() " {{{
     setlocal buftype=nowrite
     setlocal bufhidden=delete
 
-    let saved = @"
-    let @" = s:tabHelp
-    silent put
+    silent put =s:tabHelp
     call cursor(1, 1)
-    silent 1,delete
+    silent 1,delete _
     call cursor(4, 1)
-    let @" = saved
     exec "resize " . line('$')
 
     syntax match Special "|.\{-}|"
