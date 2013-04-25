@@ -765,7 +765,7 @@ endfunction " }}}
   " map a regular tab to ctrl-tab (note: doesn't work in console vim)
   exec 'inoremap ' . g:SuperTabMappingTabLiteral . ' <tab>'
 
-  imap <c-x> <c-r>=<SID>ManualCompletionEnter()<cr>
+  imap <silent> <c-x> <c-r>=<SID>ManualCompletionEnter()<cr>
 
   imap <script> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
   imap <script> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
@@ -795,7 +795,7 @@ endfunction " }}}
       let map = s:ExpandMap(map)
       exec "inoremap <script> <cr> <c-r>=<SID>SelectCompletion(" . cr . ")<cr>" . map
     else
-      inoremap <cr> <c-r>=<SID>SelectCompletion(1)<cr>
+      inoremap <silent> <cr> <c-r>=<SID>SelectCompletion(1)<cr>
     endif
     function! s:SelectCompletion(cr)
       " selecting a completion
