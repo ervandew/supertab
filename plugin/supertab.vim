@@ -445,7 +445,10 @@ function! SuperTab(command) " {{{
     return complType
   endif
 
-  return g:SuperTabMappingForward ==? '<tab>' ? "\<tab>" : ''
+  return (
+      \ g:SuperTabMappingForward ==? '<tab>' ||
+      \ g:SuperTabMappingBackward ==? '<tab>'
+    \ ) ? "\<tab>" : ''
 endfunction " }}}
 
 function! s:SuperTabHelp() " {{{
