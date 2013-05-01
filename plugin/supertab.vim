@@ -445,7 +445,7 @@ function! SuperTab(command) " {{{
     return complType
   endif
 
-  return g:SuperTabMappingForward ==? '<tab>' ? "\<tab>" : ''
+  return "\<tab>"
 endfunction " }}}
 
 function! s:SuperTabHelp() " {{{
