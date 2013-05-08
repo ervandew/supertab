@@ -359,7 +359,13 @@ function! SuperTab(command) " {{{
   " retain the normal usage of <tab> based on the cursor position.
 
   if exists('b:SuperTabDisabled') && b:SuperTabDisabled
-    return g:SuperTabMappingForward ==? '<tab>' ? "\<tab>" : ''
+    if exists('s:Tab')
+      return s:Tab()
+    endif
+    return (
+        \ g:SuperTabMappingForward ==? '<tab>' ||
+        \ g:SuperTabMappingBackward ==? '<tab>'
+      \ ) ? "\<tab>" : ''
   endif
 
   call s:InitBuffer()
@@ -445,6 +451,9 @@ function! SuperTab(command) " {{{
     return complType
   endif
 
+  if exists('s:Tab')
+    return s:Tab()
+  endif
   return (
       \ g:SuperTabMappingForward ==? '<tab>' ||
       \ g:SuperTabMappingBackward ==? '<tab>'
@@ -772,6 +781,14 @@ endfunction " }}}
 
   imap <script> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
   imap <script> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
+
+  " support delegating to smart tabs plugin
+  if g:SuperTabMappingForward ==? '<tab>' || g:SuperTabMappingBackward ==? '<tab>'
+    let existing = maparg('<tab>', 'i')
+    if existing =~ '\d\+_InsertSmartTab()$'
+      let s:Tab = function(substitute(existing, '()$', '', ''))
+    endif
+  endif
 
   exec 'imap ' . g:SuperTabMappingForward . ' <Plug>SuperTabForward'
   exec 'imap ' . g:SuperTabMappingBackward . ' <Plug>SuperTabBackward'
