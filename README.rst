@@ -1,4 +1,4 @@
-.. Copyright (c) 2012, Eric Van Dewoestine
+.. Copyright (c) 2012 - 2013, Eric Van Dewoestine
    All rights reserved.
 
    Redistribution and use of this software in source and binary forms, with
@@ -64,3 +64,78 @@ Features
 - Support for simple completion chaining (falling back to a different
   completion type, keyword completion for example, if omni or user completion
   returns no results).
+
+Frequently Asked Questions
+--------------------------
+
+- **Why isn't supertab honoring my configured settings (attempts to complete at the
+  start of a line, always performs keyword completion instead of my configured
+  default, etc.)?**
+
+  Chances are that you have a very old version of `snipmate
+  <https://github.com/msanders/snipmate.vim>`_ installed, or something similar,
+  which will issue a `<c-n>` when no snippet is found. Supertab use to map to
+  `<c-n>`, so this behavior would act as a fallback to supertab, but current
+  versions of supertab no longer do so, resulting in snipmate bypassing supertab
+  entirely.
+
+  You can check if this is the case by running the following in vim to see what
+  is mapped to `<tab>`:
+
+    ::
+
+      :verbose imap <tab>
+
+  To resolve the issue you can either:
+
+  #. Install my `fork <https://github.com/ervandew/snipmate.vim>`_ or
+  #. Upgrade to a more recent snipmate fork, like `garbase/vim-snipmate
+     <https://github.com/garbas/vim-snipmate>`_
+
+  See `#74 <https://github.com/ervandew/supertab/issues/74>`_ for additional
+  details.
+
+- **Why does <tab> navigate the completion menu from bottom to top?**
+
+  First, if after reading the explaination below (or if you don't want to bother
+  reading it), you still want the default to scroll down the list then you can
+  use:
+
+    ::
+
+      let g:SuperTabDefaultCompletionType = "<c-n>"
+
+  or if your default completion type is currently `context` then you can use
+  this instead:
+
+    ::
+
+      let g:SuperTabContextDefaultCompletionType = "<c-n>"
+
+  Now on the the reasoning behind this. When using `<c-p>` or `<c-n>` to start
+  insert completion, both populate the completion popup with the same list of
+  words in the same order, the only difference is that `<c-p>` highlights the
+  nearest matching word located above the current cursor position, which is the
+  result at the bottom of the completion popup. Without supertab installed,
+  continuing to hit `<c-p>` will walk up the list to next nearest word above the
+  cursor.
+
+  I think Bram chose to display the results like this so that
+
+  #. the completion logic is the same for `<c-n>` and `<c-p>`, only the first
+     entry to highlight differs
+  #. so that the behavior of `<c-p>` mode is consistent, always moving up the
+     list and
+  #. when starting `<c-p>` mode you don't have to switch over to
+     using `<c-n>` to get the next nearest entry, just continue to hit `<c-p>`.
+
+  So, with supertab I wanted to preserve the same behavior. If `<c-p>` is your
+  default completion method (supertab defaults to this being the case), then
+  `<tab>` will start it and additional uses of `<tab>` will move up the list
+  instead of down so that you don't have to suddenly switch to using `<s-tab>`
+  to get the next nearest result.
+
+  Why is `<c-p>` the supertab default? The original supertab author found (and I
+  agree with his finding) that while coding, the keyword match you want is
+  typically the closer of the matches above the cursor, which `<c-p>` naturally
+  provides.
