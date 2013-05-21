@@ -9,3 +9,9 @@ dist:
 
 clean:
 	@rm -R build 2> /dev/null || true
+
+install: supertab.vmb
+	vim $< -c 'so %' -c 'q'
+
+uninstall:
+	vim -c 'RmVimball supertab.vmb' -c 'q'
