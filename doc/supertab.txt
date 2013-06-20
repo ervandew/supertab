@@ -314,6 +314,10 @@ Compatibility with other plugins:
   - delimitMate: not compatible (disabled if the delimitMate <cr> mapping is
     detected.)
 
+Note: if you have an insert expression mapping with a <cr> in it or an insert
+abbreviation containing a <cr>, then supertab will not create a <cr> mapping
+which could potentially cause problems with those.
+
 
 Auto close the preview window       *supertab-closepreviewonpopupclose*
                                     *g:SuperTabClosePreviewOnPopupClose*

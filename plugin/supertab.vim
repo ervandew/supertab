@@ -802,9 +802,16 @@ endfunction " }}}
       let expr_map = maparg('<cr>', 'i') =~? '\<cr>'
     endif
 
+    redir => iabbrevs
+    silent iabbrev
+    redir END
+    let iabbrev_map = iabbrevs =~? '\<cr>'
+
     if expr_map
       " Not compatible w/ expr mappings. This is most likely a user mapping,
       " typically with the same functionality anyways.
+    elseif iabbrev_map
+      " Not compatible w/ insert abbreviations containing <cr>
     elseif maparg('<CR>', 'i') =~ '<Plug>delimitMateCR'
       " Not compatible w/ delimitMate since it doesn't play well with others
       " and will always return a <cr> which we don't want when selecting a
