@@ -70,15 +70,23 @@ value as that will be done for you when the type is set.
 
   Example: setting the default completion to 'user' completion:
 
+>
     let g:SuperTabDefaultCompletionType = "<c-x><c-u>"
+<
 
 Note: a special value of 'context' is supported which will result in
 super tab attempting to use the text preceding the cursor to decide which
-type of completion to attempt.  Currently super tab can recognize method
-calls or attribute references via '.', '::' or '->', and file path
-references containing '/'.
+type of completion to attempt. Currently supertab can recognize method calls
+or attribute references via '.', '::' or '->', and file path references
+containing '/'. If the language you are using doesn't use any of the member
+reference characters listed above, or you'd like to add aditional patterns,
+you can write a custom conxtext function als decribed in the next section
+(Completion context).
 
+  Example: setting the default completion to supertab's 'context' completion:
+>
     let g:SuperTabDefaultCompletionType = "context"
+<
 
     /usr/l<tab>     # will use filename completion
     myvar.t<tab>    # will use user completion if completefunc set,
@@ -89,12 +97,14 @@ When using context completion, super tab will fall back to a secondary default
 completion type set by |g:SuperTabContextDefaultCompletionType|.
 
 Note: once the buffer has been initialized, changing the value of this setting
-will not change the default complete type used.  If you want to change the
+will not change the default complete type used. If you want to change the
 default completion type for the current buffer after it has been set, perhaps
 in an ftplugin, you'll need to call SuperTabSetDefaultCompletionType like so,
 supplying the completion type you wish to switch to:
 
+>
     call SuperTabSetDefaultCompletionType("<c-x><c-u>")
+<
 
 
 Secondary default completion type   *supertab-contextdefault*
@@ -112,22 +122,26 @@ Completion contexts                 *supertab-completioncontexts*
 
 g:SuperTabCompletionContexts (default value: ['s:ContextText'])
 
-Sets the list of contexts used for context completion.  This value should
+Sets the list of contexts used for context completion. This value should
 be a list of function names which provide the context implementation.
 
-When supertab starts the default completion, each of these contexts will be
+When supertab starts context completion, each of these contexts will be
 consulted, in the order they were supplied, to determine the completion type
-to use.  If a context returns a completion type, that type will be used,
-otherwise the next context in the list will be consulted.  If after executing
+to use. If a context returns a completion type, that type will be used,
+otherwise the next context in the list will be consulted. If after executing
 all the context functions, no completion type has been determined, then the
-value of g:SuperTabContextDefaultCompletionType will be used.
+value of |g:SuperTabContextDefaultCompletionType| will be used.
+
+  Note: supertab also supports the b:SuperTabCompletionContexts variable
+  allowing you to set the list of contexts separately for the current buffer,
+  like from an ftplugin for example.
 
 Built in completion contexts:
 
   s:ContextText                     *supertab-contexttext*
 
   The text context will examine the text near the cursor to decide which type
-  of completion to attempt.  Currently the text context can recognize method
+  of completion to attempt. Currently the text context can recognize method
   calls or attribute references via '.', '::' or '->', and file path
   references containing '/'.
 
@@ -150,7 +164,7 @@ Built in completion contexts:
   s:ContextDiscover                 *supertab-contextdiscover*
 
   This context will use the 'g:SuperTabContextDiscoverDiscovery' variable to
-  determine the completion type to use.  It will evaluate each value, in the
+  determine the completion type to use. It will evaluate each value, in the
   order they were defined, until a variable evaluates to a non-zero or
   non-empty value, then the associated completion type is used.
 
@@ -161,15 +175,18 @@ Built in completion contexts:
 
   Example context configuration:    *supertab-contextexample*
 
+>
     let g:SuperTabCompletionContexts = ['s:ContextText', 's:ContextDiscover']
     let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
     let g:SuperTabContextDiscoverDiscovery =
         \ ["&completefunc:<c-x><c-u>", "&omnifunc:<c-x><c-o>"]
+<
 
   In addition to the default completion contexts, you can plug in your own
   implementation by creating a globally accessible function that returns
   the completion type to use (eg. "\<c-x>\<c-u>").
 
+>
     function MyTagContext()
       if filereadable(expand('%:p:h') . '/tags')
         return "\<c-x>\<c-]>"
@@ -179,10 +196,24 @@ Built in completion contexts:
     endfunction
     let g:SuperTabCompletionContexts =
         \ ['MyTagContext', 's:ContextText', 's:ContextDiscover']
+<
 
-  Note: supertab also supports the b:SuperTabCompletionContexts variable
-  allowing you to set the list of contexts separately for the current buffer,
-  like from an ftplugin for example.
+  Here is another example that could be used to add context support for
+  clojure, and perhaps other lisp variants:
+
+>
+    let b:SuperTabCompletionContexts =
+      \ ['ClojureContext'] + g:SuperTabCompletionContexts
+
+    function! ClojureContext()
+      let curline = getline('.')
+      let cnum = col('.')
+      let synname = synIDattr(synID(line('.'), cnum - 1, 1), 'name')
+      if curline =~ '(\S\+\%' . cnum . 'c' && synname !~ '\(String\|Comment\)'
+        return "\<c-x>\<c-o>"
+      endif
+    endfunction
+<
 
 
 Completion Duration                 *supertab-duration*
@@ -193,11 +224,11 @@ g:SuperTabRetainCompletionDuration (default value: 'insert')
 Determines if, and for how long, the current completion type is retained.
 The possible values include:
 'completion' - The current completion type is only retained for the
-               current completion.  Once you have chosen a completion
+               current completion. Once you have chosen a completion
                result or exited the completion mode, the default
                completion type is restored.
 'insert'     - The current completion type is saved until you exit insert
-               mode (via ESC).  Once you exit insert mode the default
+               mode (via ESC). Once you exit insert mode the default
                completion type is restored. (supertab default)
 'session'    - The current completion type is saved for the duration of
                your vim session or until you enter a different completion
@@ -226,7 +257,7 @@ to define these variables:
   other factors), it returns 1 if completion must be prevented, 0 otherwise.
 
 Note: That a buffer local version of these variables
-(b:SuperTabNoCompleteBefore, b:SuperTabNoCompleteAfter) is also supported
+(b:SuperTabNoCompleteBefore, b:SuperTabNoCompleteAfter) are also supported
 should you wish to have different values depending on the file type for
 instance.
 
@@ -238,19 +269,23 @@ g:SuperTabMappingForward  (default value: '<tab>')
 g:SuperTabMappingBackward (default value: '<s-tab>')
 
 These two variables allow you to set the keys used to kick off the current
-completion.  By default this is <tab> and <s-tab>.  To change to something
+completion. By default this is <tab> and <s-tab>. To change to something
 like <c-space> and <s-c-space>, you can add the following to your |vimrc|.
 
-        let g:SuperTabMappingForward = '<c-space>'
-        let g:SuperTabMappingBackward = '<s-c-space>'
+>
+    let g:SuperTabMappingForward = '<c-space>'
+    let g:SuperTabMappingBackward = '<s-c-space>'
+>
 
 Note: if the above does not have the desired effect (which may happen in
-console version of vim), you can try the following mappings.  Although the
+console version of vim), you can try the following mappings. Although the
 backwards mapping still doesn't seem to work in the console for me, your
 milage may vary.
 
-        let g:SuperTabMappingForward = '<nul>'
-        let g:SuperTabMappingBackward = '<s-nul>'
+>
+    let g:SuperTabMappingForward = '<nul>'
+    let g:SuperTabMappingBackward = '<s-nul>'
+<
 
 
 Inserting true tabs                 *supertab-mappingtabliteral*
@@ -262,7 +297,7 @@ Sets the key mapping used to insert a literal tab where supertab would
 otherwise attempt to kick off insert completion. The default is '<c-tab>'
 (ctrl-tab) which unfortunately might not work at the console. So if you are
 using a console vim and want this functionality, you may have to change it to
-something that is supported.  Alternatively, you can escape the <tab> with
+something that is supported. Alternatively, you can escape the <tab> with
 <c-v> (see |i_CTRL-V| for more infos).
 
 
@@ -281,12 +316,12 @@ For example, say you have a buffer with the following contents:
   FooBar
   Foo
   FooBarBaz
-And you then type F<tab>.  Vim's builtin longest support will complete the
+And you then type F<tab>. Vim's builtin longest support will complete the
 longest common text 'Foo' and offer 'FooBarFoo', 'FooBar', 'Foo', and
-'FooBarBaz' as possible completions.  With supertab's longest match
+'FooBarBaz' as possible completions. With supertab's longest match
 enhancement disabled, typing B<tab> while still in the completion mode will
 end up completing 'FooBarBaz' or 'FooBarFoo' depending your settings, instead
-of the next longest common match of 'FooBar'.  With supertab's enhanced
+of the next longest common match of 'FooBar'. With supertab's enhanced
 longest match feature enabled, the typing of B<tab> will result in the next
 longest text being completed.
 
@@ -340,23 +375,64 @@ second is one of vim's insert completion (|ins-completion|) key bindings
 (<c-p>, <c-n>, <c-x><c-]>, etc). Calling this function will set the current
 buffer's |completefunc| option to a supertab provided implementation which
 utilizes the supplied arguments to perform the completion. Since the
-|completefunc| option is being set, this feature works best when also
-setting |g:SuperTabDefaultCompletionType| to either "context" or "<c-x><c-u>".
+|completefunc| option is being set, this feature must be used with
+|g:SuperTabDefaultCompletionType| set to either "context" or "<c-x><c-u>".
 
 Here is an example that can be added to your .vimrc which will setup the
 supertab chaining for any filetype that has a provided |omnifunc| to first
 try that, then fall back to supertab's default, <c-p>, completion:
 
+>
   autocmd FileType *
     \ if &omnifunc != '' |
     \   call SuperTabChain(&omnifunc, "<c-p>") |
     \   call SuperTabSetDefaultCompletionType("<c-x><c-u>") |
     \ endif
+<
 
-Note: This feature does not support chaining any other combination of
-completions (2 or more completion functions, 2 or more key bindings, etc.). It
-can only support 1 completion function followed by 1 key binding. This is due
-to limitations imposed by vim's code completion implementation.
+Notice that this autocmd set's the supertab default completion type to user
+completion. This is because the call to SuperTabChain will set your buffer's
+|'completefunc'| to a supertab defined function which handles the completion
+chaining. If that function is never called, by user completion being invoked
+via supertab, then completion chaining will not execute. As noted above though,
+instead of setting the default to user completion, you can alternatively set
+it supertab's 'context' completion type, in which case supertab's 'context'
+completion mechanism document above will execute first, and when that context
+logic kicks off a user completion, based on the current context, then
+supertab's completion chaining will then take over.
+
+Here is an example where 'context' is the global default and completion
+chaining is enabled for file types that have omni completion support:
+
+>
+  let g:SuperTabDefaultCompletionType = 'context'
+  autocmd FileType *
+    \ if &omnifunc != '' |
+    \   call SuperTabChain(&omnifunc, "<c-p>") |
+    \ endif
+<
+
+That configuration will result in a completion flow like so:
+
+  if text before the cursor looks like a file path:
+    use file completion
+  elif text before the cursor looks like an attempt to access a member
+  (method, field, etc):
+    use user completion
+      where user completion is currently set to supertab's
+      completion chaining, resulting in:
+        if omni completion has results:
+          use omni completion
+        else:
+          use keyword completion
+  else:
+    use keyword completion
+
+Note: Completion chaining only supports chaining 1 completion function (omni
+or user) with 1 regular completion keybinding. All other combinations of
+completions (2 or more completion functions, 2 or more key bindings, etc.) are
+not supported due to limitations imposed by vim's code completion
+implementation.
 
 Note: If the |completefunc| or |omnifunc| use vim's |complete_add()| instead
 of returning completion results as a list, then Supertab's completion chaining
