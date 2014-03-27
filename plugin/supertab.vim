@@ -13,7 +13,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2013
+"   Copyright (c) 2002 - 2014
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -316,6 +316,9 @@ function! s:ManualCompletionEnter() " {{{
     " optionally enable enhanced longest completion
     if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
       call s:EnableLongestEnhancement()
+    " handle backspacing which triggers g:SuperTabNoCompleteAfter match
+    elseif s:IsNoCompleteAfterReset()
+      call s:EnableNoCompleteAfterReset()
     endif
 
     if g:SuperTabLongestHighlight &&
@@ -378,6 +381,9 @@ function! SuperTab(command) " {{{
     " optionally enable enhanced longest completion
     if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
       call s:EnableLongestEnhancement()
+    " handle backspacing which triggers g:SuperTabNoCompleteAfter match
+    elseif s:IsNoCompleteAfterReset()
+      call s:EnableNoCompleteAfterReset()
     endif
 
     if !pumvisible()
@@ -499,15 +505,19 @@ function! s:SuperTabHelp() " {{{
   let b:winnr = winnr
 endfunction " }}}
 
-function! s:WillComplete() " {{{
+function! s:WillComplete(...) " {{{
   " Determines if completion should be kicked off at the current location.
+  " Optional arg:
+  "   col: The column to check at, otherwise use the current column.
 
-  if pumvisible()
+  " if an arg was supplied, then we will re-check even if already in
+  " completion mode.
+  if pumvisible() && !a:0
     return 1
   endif
 
   let line = getline('.')
-  let cnum = col('.')
+  let cnum = a:0 ? a:1 : col('.')
 
   " honor SuperTabNoCompleteAfter
   let pre = cnum >= 2 ? line[:cnum - 2] : ''
@@ -552,8 +562,51 @@ function! s:EnableLongestEnhancement() " {{{
   call s:CaptureKeyPresses()
 endfunction " }}}
 
+function! s:IsNoCompleteAfterReset() " {{{
+  " if the user has g:SuperTabNoCompleteAfter set, then re-map <bs> so that
+  " backspacing to a point where one of the g:SuperTabNoCompleteAfter
+  " entries matches will cause completion mode to exit.
+  let complAfterType = type(b:SuperTabNoCompleteAfter)
+  if complAfterType == 2
+    return 1
+  endif
+  return len(g:SuperTabNoCompleteAfter) && g:SuperTabNoCompleteAfter != ['^', '\s']
+endfunction " }}}
+
+function! s:EnableNoCompleteAfterReset() " {{{
+  augroup supertab_reset
+    autocmd!
+    autocmd InsertLeave,CursorMovedI <buffer>
+      \ call s:ReleaseKeyPresses() | autocmd! supertab_reset
+  augroup END
+
+  " short version of s:CaptureKeyPresses
+  if !exists('b:capturing') || !b:capturing
+    let b:capturing = 1
+    let b:capturing_start = col('.')
+    let b:captured = {
+        \ '<bs>': maparg('<bs>', 'i'),
+        \ '<c-h>': maparg('<c-h>', 'i'),
+      \ }
+    imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>bs>")<cr>
+    imap <buffer> <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
+  endif
+endfunction " }}}
+
 function! s:CompletionReset(char) " {{{
   let b:complReset = 1
+
+  " handle exiting completion mode if user has g:SuperTabNoCompleteAfter set
+  " and they are about to backspace to a point where that maches one of the
+  " entries in that var.
+  if (a:char == "\<bs>" || a:char == "\<c-h>") && s:IsNoCompleteAfterReset()
+    if !s:WillComplete(col('.') - 1)
+      " exit from completion mode then issue the currently requested backspace
+      call feedkeys("\<space>\<bs>\<bs>", 'n')
+      return ''
+    endif
+  endif
+
   return a:char
 endfunction " }}}
 
@@ -569,6 +622,8 @@ function! s:CaptureKeyPresses() " {{{
       \ }
     " TODO: use &keyword to get an accurate list of chars to map
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
+      let existing = maparg(c, 'i')
+      let b:captured[c] = existing
       exec 'imap <buffer> ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
     endfor
     imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>bs>")<cr>
@@ -612,12 +667,9 @@ endfunction " }}}
 function! s:ReleaseKeyPresses() " {{{
   if exists('b:capturing') && b:capturing
     let b:capturing = 0
-    for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
+    for c in keys(b:captured)
       exec 'iunmap <buffer> ' . c
     endfor
-
-    iunmap <buffer> <bs>
-    iunmap <buffer> <c-h>
 
     " restore any previous mappings
     for [key, rhs] in items(b:captured)
@@ -628,7 +680,7 @@ function! s:ReleaseKeyPresses() " {{{
           let expr = substitute(rhs, '\(.*\)".\{-}"\(.*\)', '\1%s\2', '')
           let rhs = printf(expr, args)
         endif
-        exec printf("imap <silent> %s %s", key, rhs)
+        exec printf("imap <silent> <buffer> %s %s", key, rhs)
       endif
     endfor
     unlet b:captured
