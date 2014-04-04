@@ -1,4 +1,4 @@
-.. Copyright (c) 2012 - 2013, Eric Van Dewoestine
+.. Copyright (c) 2012 - 2014, Eric Van Dewoestine
    All rights reserved.
 
    Redistribution and use of this software in source and binary forms, with
@@ -112,7 +112,7 @@ Frequently Asked Questions
 
       let g:SuperTabContextDefaultCompletionType = "<c-n>"
 
-  Now on the the reasoning behind this. When using `<c-p>` or `<c-n>` to start
+  Now on to the reasoning behind this. When using `<c-p>` or `<c-n>` to start
   insert completion, both populate the completion popup with the same list of
   words in the same order, the only difference is that `<c-p>` highlights the
   nearest matching word located above the current cursor position, which is the
