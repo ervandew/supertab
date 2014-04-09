@@ -313,6 +313,8 @@ function! s:ManualCompletionEnter() " {{{
       return s:CommandLineCompletion()
     endif
 
+    call s:InitBuffer()
+
     " optionally enable enhanced longest completion
     if g:SuperTabLongestEnhanced && &completeopt =~ 'longest'
       call s:EnableLongestEnhancement()
