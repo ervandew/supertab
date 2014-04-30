@@ -482,11 +482,11 @@ function! s:SuperTabHelp() " {{{
 
   let winnr = winnr()
   if bufwinnr("SuperTabHelp") == -1
-    botright split SuperTabHelp
+    keepalt botright split SuperTabHelp
 
     setlocal noswapfile
     setlocal buftype=nowrite
-    setlocal bufhidden=delete
+    setlocal bufhidden=wipe
 
     silent put =s:tabHelp
     call cursor(1, 1)
