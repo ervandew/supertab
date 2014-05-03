@@ -97,7 +97,7 @@ Frequently Asked Questions
 
 - **Why does <tab> navigate the completion menu from bottom to top?**
 
-  First, if after reading the explaination below (or if you don't want to bother
+  First, if after reading the explanation below (or if you don't want to bother
   reading it), you still want the default to scroll down the list then you can
   use:
 
