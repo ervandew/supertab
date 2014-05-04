@@ -113,9 +113,9 @@ Frequently Asked Questions
   You can check if this is the case by running the following in vim to see what
   is mapped to `<tab>`:
 
-    ::
+  ::
 
-      :verbose imap <tab>
+    :verbose imap <tab>
 
   To resolve the issue you can either:
 
@@ -132,16 +132,16 @@ Frequently Asked Questions
   reading it), you still want the default to scroll down the list then you can
   use:
 
-    ::
+  ::
 
-      let g:SuperTabDefaultCompletionType = "<c-n>"
+    let g:SuperTabDefaultCompletionType = "<c-n>"
 
   or if your default completion type is currently `context` then you can use
   this instead:
 
-    ::
+  ::
 
-      let g:SuperTabContextDefaultCompletionType = "<c-n>"
+    let g:SuperTabContextDefaultCompletionType = "<c-n>"
 
   Now on to the reasoning behind this. When using `<c-p>` or `<c-n>` to start
   insert completion, both populate the completion popup with the same list of
