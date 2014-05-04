@@ -86,7 +86,7 @@ You have a few options when it comes to installing supertab:
    instructions on how to install plugins.
 
 3. And lastly you can use the vimball (.vmb) file found on
-   `vim.org <http://www.vim.org/scripts/script.php?script_id=1643>`_.:
+   `vim.org <http://www.vim.org/scripts/script.php?script_id=1643>`_:
 
    Vimball files are installed by simply opening them in vim and then sourcing
    the file:
