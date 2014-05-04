@@ -65,6 +65,37 @@ Features
   completion type, keyword completion for example, if omni or user completion
   returns no results).
 
+Installation
+------------
+
+You have a few options when it comes to installing supertab:
+
+1. Use your linux package manager:
+
+   Some linux distributions include a supertab package so you don't have to
+   manage the install/upgrade of supertab separately from other software on your
+   system.
+
+2. Use a vim plugin manager:
+
+   There are several plugin managers for vim, which will either allow you to
+   manually clone vim plugin repositories, or will do so for you. Probably the
+   two most popular ones currently are `pathogen
+   <https://github.com/tpope/vim-pathogen>`_ and `vundle
+   <https://github.com/gmarik/Vundle.vim>`_. Please refer to their docs for
+   instructions on how to install plugins.
+
+3. And lastly you can use the vimball (.vmb) file found on
+   `vim.org <http://www.vim.org/scripts/script.php?script_id=1643>`_.:
+
+   Vimball files are installed by simply opening them in vim and then sourcing
+   the file:
+
+   ::
+
+     $ vim supertab.vmb
+     :source %
+
 Frequently Asked Questions
 --------------------------
 
