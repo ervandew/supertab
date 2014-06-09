@@ -844,11 +844,18 @@ function! SuperTabCodeComplete(findstart, base) " {{{
   endif
 
   let results = Func(a:findstart, a:base)
-  if len(results)
+  " Handle dict case, with 'words' and 'refresh' (optional).
+  " This is used by YouCompleteMe. (See complete-functions).
+  if type(results) == type({}) && has_key(results, 'words')
+    if len(results.words)
+      return results
+    endif
+  elseif len(results)
     return results
   endif
 
   exec 'let keys = "' . escape(b:SuperTabChain[1], '<') . '"'
+  " <c-e>: stop completion and go back to the originally typed text.
   call feedkeys("\<c-e>" . keys, 'nt')
   return []
 endfunction " }}}
