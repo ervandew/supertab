@@ -603,8 +603,10 @@ function! s:CompletionReset(char) " {{{
   " entries in that var.
   if (a:char == "\<bs>" || a:char == "\<c-h>") && s:IsNoCompleteAfterReset()
     if !s:WillComplete(col('.') - 1)
-      " exit from completion mode then issue the currently requested backspace
-      call feedkeys("\<space>\<bs>\<bs>", 'n')
+      " Exit from completion mode then issue the currently requested
+      " backspace (mapped).
+      call feedkeys("\<space>\<bs>", 'n')
+      call feedkeys("\<bs>", 'mt')
       return ''
     endif
   endif
