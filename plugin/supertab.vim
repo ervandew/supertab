@@ -587,8 +587,8 @@ function! s:EnableNoCompleteAfterReset() " {{{
     let b:capturing = 1
     let b:capturing_start = col('.')
     let b:captured = {
-        \ '<bs>': maparg('<bs>', 'i'),
-        \ '<c-h>': maparg('<c-h>', 'i'),
+        \ '<bs>': s:CaptureKeyMap('<bs>'),
+        \ '<c-h>': s:CaptureKeyMap('<c-h>'),
       \ }
     imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>bs>")<cr>
     imap <buffer> <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
@@ -617,20 +617,28 @@ function! s:CaptureKeyPresses() " {{{
     let b:capturing = 1
     let b:capturing_start = col('.')
     " save any previous mappings
-    " TODO: capture additional info provided by vim 7.3.032 and up.
     let b:captured = {
-        \ '<bs>': maparg('<bs>', 'i'),
-        \ '<c-h>': maparg('<c-h>', 'i'),
+        \ '<bs>': s:CaptureKeyMap('<bs>'),
+        \ '<c-h>': s:CaptureKeyMap('<c-h>'),
       \ }
     " TODO: use &keyword to get an accurate list of chars to map
     for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
-      let existing = maparg(c, 'i')
+      let existing = s:CaptureKeyMap(c)
       let b:captured[c] = existing
       exec 'imap <buffer> ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
     endfor
     imap <buffer> <bs> <c-r>=<SID>CompletionReset("\<lt>bs>")<cr>
     imap <buffer> <c-h> <c-r>=<SID>CompletionReset("\<lt>c-h>")<cr>
   endif
+endfunction " }}}
+
+function! s:CaptureKeyMap(key) " {{{
+  " as of 7.3.032 maparg supports obtaining extended information about the
+  " mapping.
+  if v:version > 703 || (v:version == 703 && has(patch32))
+    return maparg(a:key, 'i', 0, 1)
+  endif
+  return maparg(a:key, 'i')
 endfunction " }}}
 
 function! s:IsPreviewOpen() " {{{
@@ -674,15 +682,31 @@ function! s:ReleaseKeyPresses() " {{{
     endfor
 
     " restore any previous mappings
-    for [key, rhs] in items(b:captured)
-      if rhs != ''
-        let args = substitute(rhs, '.*\(".\{-}"\).*', '\1', '')
-        if args != rhs
-          let args = substitute(args, '<', '<lt>', 'g')
-          let expr = substitute(rhs, '\(.*\)".\{-}"\(.*\)', '\1%s\2', '')
-          let rhs = printf(expr, args)
+    for [key, mapping] in items(b:captured)
+      if !len(mapping)
+        continue
+      endif
+
+      if type(mapping) == 4
+        let restore = mapping.noremap ? "inoremap" : "imap"
+        let restore .= " <buffer>"
+        if mapping.silent
+          let restore .= " <silent>"
         endif
-        exec printf("imap <silent> <buffer> %s %s", key, rhs)
+        if mapping.expr
+          let restore .= " <expr>"
+        endif
+        let rhs = substitute(mapping.rhs, '<SID>\c', '<SNR>' . mapping.sid . '_', 'g')
+        let restore .= ' ' . key . ' ' . rhs
+        exec restore
+      elseif type(c) == 1
+        let args = substitute(mapping, '.*\(".\{-}"\).*', '\1', '')
+        if args != mapping
+          let args = substitute(args, '<', '<lt>', 'g')
+          let expr = substitute(mapping, '\(.*\)".\{-}"\(.*\)', '\1%s\2', '')
+          let mapping = printf(expr, args)
+        endif
+        exec printf("imap <silent> <buffer> %s %s", key, mapping)
       endif
     endfor
     unlet b:captured
