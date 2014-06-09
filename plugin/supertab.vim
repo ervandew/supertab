@@ -392,9 +392,11 @@ function! SuperTab(command) " {{{
       let b:complTypeManual = ''
     endif
 
+    let edge = exists('b:supertabCompletion') && b:supertabCompletion
+
     " exception: if in <c-p> mode, then <c-n> should move up the list, and
     " <c-p> down the list.
-    if a:command == 'p' && !b:complReset &&
+    if a:command == 'p' && !b:complReset && edge &&
       \ (b:complType == "\<c-p>" ||
       \   (b:complType == 'context' &&
       \    b:complTypeManual == '' &&
@@ -413,9 +415,16 @@ function! SuperTab(command) " {{{
     elseif pumvisible() && !b:complReset
       let type = b:complType == 'context' ? b:complTypeContext : b:complType
       if a:command == 'n'
-        return type == "\<c-p>" || type == "\<c-x>\<c-p>" ? "\<c-p>" : "\<c-n>"
+        return edge && (type == "\<c-p>" || type == "\<c-x>\<c-p>") ?
+          \ "\<c-p>" : "\<c-n>"
       endif
-      return type == "\<c-p>" || type == "\<c-x>\<c-p>" ? "\<c-n>" : "\<c-p>"
+      return edge && (type == "\<c-p>" || type == "\<c-x>\<c-p>") ?
+        \ "\<c-n>" : "\<c-p>"
+    endif
+
+    " set flag to indicate that supertab initiated the current completion mode
+    if exists('##CompleteDone')
+      let b:supertabCompletion = 1
     endif
 
     " handle 'context' completion.
@@ -462,7 +471,7 @@ function! SuperTab(command) " {{{
     endif
 
     if g:SuperTabUndoBreak && !pumvisible()
-        return "\<c-g>u" . complType
+      return "\<c-g>u" . complType
     endif
 
     return complType
@@ -832,6 +841,15 @@ endfunction " }}}
     augroup supertab_close_preview
       autocmd!
       autocmd InsertLeave,CursorMovedI * call s:ClosePreview()
+    augroup END
+  endif
+
+  " if we can, set a buffer var to indicate that the current completion mode was
+  " initiated by supertab, and clear that var when completion mode exits.
+  if exists('##CompleteDone')
+    augroup supertab_tracking
+      autocmd!
+      autocmd CompleteDone * unlet! b:supertabCompletion
     augroup END
   endif
 " }}}
