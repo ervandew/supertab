@@ -99,7 +99,7 @@ completion type set by |g:SuperTabContextDefaultCompletionType|.
 Note: once the buffer has been initialized, changing the value of this setting
 will not change the default complete type used. If you want to change the
 default completion type for the current buffer after it has been set, perhaps
-in an ftplugin, you'll need to call SuperTabSetDefaultCompletionType like so,
+in an ftplugin, you'll need to call *SuperTabSetDefaultCompletionType* like so,
 supplying the completion type you wish to switch to:
 
 >
@@ -152,10 +152,10 @@ Built in completion contexts:
 
   Supported configuration attributes:
 
-    g:SuperTabContextTextFileTypeExclusions
+    *g:SuperTabContextTextFileTypeExclusions*
     List of file types for which the text context will be skipped.
 
-    g:SuperTabContextTextOmniPrecedence
+    *g:SuperTabContextTextOmniPrecedence*
     List of omni completion option names in the order of precedence that they
     should be used if available. By default, user completion will be given
     precedence over omni completion, but you can use this variable to give
@@ -365,11 +365,11 @@ when the completion popup closes (completion is finished or canceled).
 Completion Chaining                  *supertab-completionchaining*
 
 SuperTab provides the ability to chain one of the completion functions
-(|completefunc| or |omnifunc|) together with a one of the default vim
+(|completefunc| or |omnifunc|) together with one of the default vim
 completion key sequences (|ins-completion|), giving you the ability to attempt
 completion with the first, and upon no results, fall back to the second.
 
-To utilize this feature you need to call the SuperTabChain function where
+To utilize this feature you need to call the *SuperTabChain* function where
 the first argument is the name of a vim compatible |complete-function| and the
 second is one of vim's insert completion (|ins-completion|) key bindings
 (<c-p>, <c-n>, <c-x><c-]>, etc). Calling this function will set the current
