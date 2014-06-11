@@ -637,7 +637,7 @@ endfunction " }}}
 function! s:CaptureKeyMap(key) " {{{
   " as of 7.3.032 maparg supports obtaining extended information about the
   " mapping.
-  if v:version > 703 || (v:version == 703 && has(patch32))
+  if v:version > 703 || (v:version == 703 && has('patch32'))
     return maparg(a:key, 'i', 0, 1)
   endif
   return maparg(a:key, 'i')
