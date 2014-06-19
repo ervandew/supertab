@@ -79,8 +79,8 @@ super tab attempting to use the text preceding the cursor to decide which
 type of completion to attempt. Currently supertab can recognize method calls
 or attribute references via '.', '::' or '->', and file path references
 containing '/'. If the language you are using doesn't use any of the member
-reference characters listed above, or you'd like to add aditional patterns,
-you can write a custom conxtext function als decribed in the next section
+reference characters listed above, or you'd like to add additional patterns,
+you can write a custom context function also described in the next section
 (Completion context).
 
   Example: setting the default completion to supertab's 'context' completion:
@@ -246,14 +246,14 @@ These two variables are used to control when supertab will attempt completion
 or instead fall back to inserting a literal <tab>. There are two possible ways
 to define these variables:
 
-  1) by specifying a list of patterns which are tested against the text before 
-  and after the current cursor position that when matched, prevent completion. 
-  So if you don't want supertab to start completion at the start of a line, 
-  after a comma, or after a space, you can set g:SuperTabNoCompleteAfter 
+  1) by specifying a list of patterns which are tested against the text before
+  and after the current cursor position that when matched, prevent completion.
+  So if you don't want supertab to start completion at the start of a line,
+  after a comma, or after a space, you can set g:SuperTabNoCompleteAfter
   to ['^', ',', '\s'].
 
   2) by specifying a funcref to a global accessible function which expects
-  as parameter the text to be inspected (before or after) and, based on that (or 
+  as parameter the text to be inspected (before or after) and, based on that (or
   other factors), it returns 1 if completion must be prevented, 0 otherwise.
 
 Note: That a buffer local version of these variables
