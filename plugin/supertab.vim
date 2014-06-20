@@ -910,27 +910,20 @@ endfunction " }}}
   " mappings from other plugins and misinterprets them, etc, so this block is
   " experimental and could be removed later.
   if g:SuperTabMappingForward ==? '<s-tab>' || g:SuperTabMappingBackward ==? '<s-tab>'
+    let stab = maparg('<s-tab>', 'i')
     if s:has_dict_maparg
       let existing_stab = maparg('<s-tab>', 'i', 0, 1)
-      if len(existing_stab)
-        if existing_stab.expr
-          let ref = existing_stab.rhs
-          let ref = substitute(ref, '<SID>\c', '<SNR>' . existing_stab.sid . '_', '')
-          let ref = substitute(ref, '()$', '', '')
-          let s:ShiftTab = function(ref)
-        else
-          let existing_stab = substitute(existing_stab, '\(<[-a-zA-Z0-9]\+>\)', '\\\1', 'g')
-          exec "let existing_stab = \"" . existing_stab . "\""
-          let s:ShiftTab = existing_stab
-        endif
+      if len(existing_stab) && existing_stab.expr
+        let stab = substitute(stab, '<SID>\c', '<SNR>' . existing_stab.sid . '_', '')
+        let stab = substitute(stab, '()$', '', '')
+        let s:ShiftTab = function(stab)
+        let stab = ''
       endif
-    else
-      let existing_stab = maparg('<s-tab>', 'i')
-      if existing_stab != ''
-        let existing_stab = substitute(existing_stab, '\(<[-a-zA-Z0-9]\+>\)', '\\\1', 'g')
-        exec "let existing_stab = \"" . existing_stab . "\""
-        let s:ShiftTab = existing_stab
-      endif
+    endif
+    if stab != ''
+      let stab = substitute(stab, '\(<[-a-zA-Z0-9]\+>\)', '\\\1', 'g')
+      exec "let stab = \"" . stab . "\""
+      let s:ShiftTab = stab
     endif
   endif
 
