@@ -468,13 +468,30 @@ function! SuperTab(command) " {{{
     return complType
   endif
 
-  if exists('s:Tab')
-    return s:Tab()
+  if (a:command == 'n' && g:SuperTabMappingForward ==? '<tab>') ||
+   \ (a:command == 'p' && g:SuperTabMappingBackward ==? '<tab>')
+
+    " trigger our func ref to the smart tabs plugin if present.
+    if exists('s:Tab')
+      return s:Tab()
+    endif
+
+    return "\<tab>"
   endif
-  return (
-      \ g:SuperTabMappingForward ==? '<tab>' ||
-      \ g:SuperTabMappingBackward ==? '<tab>'
-    \ ) ? "\<tab>" : ''
+
+  if (a:command == 'n' && g:SuperTabMappingForward ==? '<s-tab>') ||
+   \ (a:command == 'p' && g:SuperTabMappingBackward ==? '<s-tab>')
+    " support triggering <s-tab> mappings users might have.
+    if exists('s:ShiftTab')
+      if type(s:ShiftTab) == 2
+        return s:ShiftTab()
+      else
+        call feedkeys(s:ShiftTab, 'n')
+      endif
+    endif
+  endif
+
+  return ''
 endfunction " }}}
 
 function! s:SuperTabHelp() " {{{
@@ -637,7 +654,7 @@ endfunction " }}}
 function! s:CaptureKeyMap(key) " {{{
   " as of 7.3.032 maparg supports obtaining extended information about the
   " mapping.
-  if v:version > 703 || (v:version == 703 && has('patch32'))
+  if s:has_dict_maparg
     return maparg(a:key, 'i', 0, 1)
   endif
   return maparg(a:key, 'i')
@@ -878,11 +895,42 @@ endfunction " }}}
   imap <script> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
   imap <script> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
 
+  let s:has_dict_maparg = v:version > 703 || (v:version == 703 && has('patch32'))
+
   " support delegating to smart tabs plugin
   if g:SuperTabMappingForward ==? '<tab>' || g:SuperTabMappingBackward ==? '<tab>'
-    let existing = maparg('<tab>', 'i')
-    if existing =~ '\d\+_InsertSmartTab()$'
-      let s:Tab = function(substitute(existing, '()$', '', ''))
+    let existing_tab = maparg('<tab>', 'i')
+    if existing_tab =~ '\d\+_InsertSmartTab()$'
+      let s:Tab = function(substitute(existing_tab, '()$', '', ''))
+    endif
+  endif
+
+  " save user's existing <s-tab> mapping if they have one.
+  " Note: this could cause more problems than it solves if it picks up <s-tab>
+  " mappings from other plugins and misinterprets them, etc, so this block is
+  " experimental and could be removed later.
+  if g:SuperTabMappingForward ==? '<s-tab>' || g:SuperTabMappingBackward ==? '<s-tab>'
+    if s:has_dict_maparg
+      let existing_stab = maparg('<s-tab>', 'i', 0, 1)
+      if len(existing_stab)
+        if existing_stab.expr
+          let ref = existing_stab.rhs
+          let ref = substitute(ref, '<SID>\c', '<SNR>' . existing_stab.sid . '_', '')
+          let ref = substitute(ref, '()$', '', '')
+          let s:ShiftTab = function(ref)
+        else
+          let existing_stab = substitute(existing_stab, '\(<[-a-zA-Z0-9]\+>\)', '\\\1', 'g')
+          exec "let existing_stab = \"" . existing_stab . "\""
+          let s:ShiftTab = existing_stab
+        endif
+      endif
+    else
+      let existing_stab = maparg('<s-tab>', 'i')
+      if existing_stab != ''
+        let existing_stab = substitute(existing_stab, '\(<[-a-zA-Z0-9]\+>\)', '\\\1', 'g')
+        exec "let existing_stab = \"" . existing_stab . "\""
+        let s:ShiftTab = existing_stab
+      endif
     endif
   endif
 
@@ -891,7 +939,7 @@ endfunction " }}}
 
   if g:SuperTabCrMapping
     let expr_map = 0
-    if v:version > 703 || (v:version == 703 && has('patch32'))
+    if s:has_dict_maparg
       let map_dict = maparg('<cr>', 'i', 0, 1)
       let expr_map = has_key(map_dict, 'expr') && map_dict.expr
     else
