@@ -120,7 +120,7 @@ Frequently Asked Questions
   To resolve the issue you can either:
 
   #. Install my `fork <https://github.com/ervandew/snipmate.vim>`_ or
-  #. Upgrade to a more recent snipmate fork, like `garbase/vim-snipmate
+  #. Upgrade to a more recent snipmate fork, like `garbas/vim-snipmate
      <https://github.com/garbas/vim-snipmate>`_
 
   See `#74 <https://github.com/ervandew/supertab/issues/74>`_ for additional
