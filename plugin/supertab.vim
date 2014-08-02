@@ -623,6 +623,7 @@ function! s:CompletionReset(char) " {{{
       " Exit from completion mode then issue the currently requested
       " backspace (mapped).
       call feedkeys("\<space>\<bs>", 'n')
+      call s:ReleaseKeyPresses()
       call feedkeys("\<bs>", 'mt')
       return ''
     endif
