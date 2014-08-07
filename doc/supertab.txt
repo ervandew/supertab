@@ -439,4 +439,9 @@ of returning completion results as a list, then Supertab's completion chaining
 won't work properly with it since Supertab uses the function result to
 determine if it should fallback to the next completion type.
 
+Note: If you are using the 'context' completion type, be sure to _not_ set the
+|g:SuperTabContextTextOmniPrecedence| variable. The supertab default value for
+that setting works with completion chaining, but if you change it, you may be
+telling supertab to bypass its completion chaining logic.
+
 vim:tw=78:ts=8:ft=help:norl:
