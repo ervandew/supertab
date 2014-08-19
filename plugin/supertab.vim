@@ -800,7 +800,12 @@ function! s:ContextText() " {{{
     let curline = getline('.')
     let cnum = col('.')
     let synname = synIDattr(synID(line('.'), cnum - 1, 1), 'name')
-    if curline =~ '.*/\w*\%' . cnum . 'c' ||
+
+    if curline =~ '.*</\w*\%' . cnum . 'c' &&
+      \ (&ft == 'xml' || &ft == 'html')
+      return "\<c-x>\<c-o>"
+
+    elseif curline =~ '.*[^<]/\w*\%' . cnum . 'c' ||
       \ ((has('win32') || has('win64')) && curline =~ '.*\\\w*\%' . cnum . 'c')
       return "\<c-x>\<c-f>"
 
