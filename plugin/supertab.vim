@@ -800,8 +800,12 @@ function! s:ContextText() " {{{
     let curline = getline('.')
     let cnum = col('.')
     let synname = synIDattr(synID(line('.'), cnum - 1, 1), 'name')
-    if curline =~ '.*/\w*\%' . cnum . 'c' ||
-      \ ((has('win32') || has('win64')) && curline =~ '.*\\\w*\%' . cnum . 'c')
+
+    " don't kick off file completion if the pattern is '</' (to account for
+    " sgml languanges), that's what the following <\@<! pattern is doing.
+    if curline =~ '<\@<!/\w*\%' . cnum . 'c' ||
+      \ ((has('win32') || has('win64')) && curline =~ '\\\w*\%' . cnum . 'c')
+
       return "\<c-x>\<c-f>"
 
     elseif curline =~ '.*\(\w\|[\])]\)\(\.\|>\?::\|->\)\w*\%' . cnum . 'c' &&
