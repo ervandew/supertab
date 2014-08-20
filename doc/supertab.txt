@@ -155,11 +155,22 @@ Built in completion contexts:
     *g:SuperTabContextTextFileTypeExclusions*
     List of file types for which the text context will be skipped.
 
-    *g:SuperTabContextTextOmniPrecedence*
+    *g:SuperTabContextTextOmniPrecedence* (default: ['&completefunc', '&omnifunc'])
+    *b:SuperTabContextTextOmniPrecedence*
     List of omni completion option names in the order of precedence that they
     should be used if available. By default, user completion will be given
     precedence over omni completion, but you can use this variable to give
     omni completion higher precedence by placing it first in the list.
+
+    *g:SuperTabContextTextMemberPatterns* (default: ['\.', '>\?::', '->'])
+    *b:SuperTabContextTextMemberPatterns*
+    List of patterns used to determine when omni/user completion should be
+    used. The default list consists of the most common patterns used to access
+    module/class/object members.
+
+    Note: For html and xml based files, the buffer local version of the above
+    two settings are set to trigger omni completion first when encountering a
+    potential end tag pattern of '</'.
 
   s:ContextDiscover                 *supertab-contextdiscover*
 
