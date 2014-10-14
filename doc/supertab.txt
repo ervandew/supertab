@@ -315,6 +315,8 @@ something that is supported. Alternatively, you can escape the <tab> with
 Enhanced longest match support      *supertab-longestenhanced*
                                     *g:SuperTabLongestEnhanced*
 
+g:SuperTabMappingTabManual (default value: <c-x>)
+
 g:SuperTabLongestEnhanced (default value: 0)
 
 When enabled and 'longest' is in your |completeopt| setting, supertab will
