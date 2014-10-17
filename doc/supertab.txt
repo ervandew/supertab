@@ -311,6 +311,8 @@ using a console vim and want this functionality, you may have to change it to
 something that is supported. Alternatively, you can escape the <tab> with
 <c-v> (see |i_CTRL-V| for more infos).
 
+See also |supertab-preventcomplete|.
+
 
 Enhanced longest match support      *supertab-longestenhanced*
                                     *g:SuperTabLongestEnhanced*
