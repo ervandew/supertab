@@ -27,6 +27,7 @@ Supertab                                    *supertab*
     Preselecting the first entry            |supertab-longesthighlight|
     Mapping <cr> to end completion          |supertab-crmapping|
     Auto close the preview window           |supertab-closepreviewonpopupclose|
+    Keyword completion ignore/match case    |supertab-completecase|
     Completion Chaining                     |supertab-completionchaining|
 
 ==============================================================================
@@ -374,6 +375,25 @@ g:SuperTabClosePreviewOnPopupClose (default value: 0)
 
 When enabled, supertab will attempt to close vim's completion preview window
 when the completion popup closes (completion is finished or canceled).
+
+
+Completion ignore/match case        *supertab-completecase*
+                                    *g:SuperTabCompleteCase*
+
+g:SuperTabCompleteCase (default value: 'inherit')
+
+When issuing completions (keyword and potentially others), the value of your
+|'ignorecase'| setting will determine what results are returned based on
+whether or not you've chosen to ignore case or not. However, you may have
+|'ignorecase'| set or unset for other reasons and don't want that value
+considered when using insert completion. SuperTab allows you temporarily
+override |'ignorecase'| by setting g:SuperTabCompleteCase to either 'ignore'
+or 'match' depending on whether you want to always ignore or match case when
+using insert completion.
+
+Note: third party omni/user completion plugins may or may not honor
+|'ignorecase'|. If they do not, then you can probably contact them to add that
+support.
 
 Completion Chaining                  *supertab-completionchaining*
 

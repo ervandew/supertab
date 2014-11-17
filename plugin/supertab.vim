@@ -139,6 +139,10 @@ set cpo&vim
     let g:SuperTabUndoBreak = 0
   endif
 
+  if !exists("g:SuperTabCompleteCase")
+    let g:SuperTabCompleteCase = 'inherit'
+  endif
+
 " }}}
 
 " Script Variables {{{
@@ -467,6 +471,23 @@ function! SuperTab(command) " {{{
 
     if g:SuperTabUndoBreak && !pumvisible()
         return "\<c-g>u" . complType
+    endif
+
+    if g:SuperTabCompleteCase == 'ignore' ||
+     \ g:SuperTabCompleteCase == 'match'
+      if exists('##CompleteDone')
+        let ignorecase = g:SuperTabCompleteCase == 'ignore' ? 1 : 0
+        if &ignorecase != ignorecase
+          let b:supertab_ignorecase_save = &ignorecase
+          let &ignorecase = ignorecase
+          augroup supertab_ignorecase
+            autocmd CompleteDone <buffer>
+              \ let &ignorecase = b:supertab_ignorecase_save |
+              \ unlet b:supertab_ignorecase_save |
+              \ autocmd! supertab_ignorecase
+          augroup END
+        endif
+      endif
     endif
 
     return complType
