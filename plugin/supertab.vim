@@ -983,12 +983,15 @@ endfunction " }}}
     if expr_map
       " Not compatible w/ expr mappings. This is most likely a user mapping,
       " typically with the same functionality anyways.
+      let g:SuperTabCrMapping = 0
     elseif iabbrev_map
       " Not compatible w/ insert abbreviations containing <cr>
+      let g:SuperTabCrMapping = 0
     elseif maparg('<CR>', 'i') =~ '<Plug>delimitMateCR'
       " Not compatible w/ delimitMate since it doesn't play well with others
       " and will always return a <cr> which we don't want when selecting a
       " completion.
+      let g:SuperTabCrMapping = 0
     elseif maparg('<CR>', 'i') =~ '<CR>'
       let map = maparg('<cr>', 'i')
       let cr = !(map =~? '\(^\|[^)]\)<cr>' || map =~ 'ExpandCr')
