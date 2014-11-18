@@ -354,7 +354,7 @@ you to simply hit <enter> to use it.
 Mapping <cr> to end completion      *supertab-crmapping*
                                     *g:SuperTabCrMapping*
 
-g:SuperTabCrMapping (default value: 1)
+g:SuperTabCrMapping (default value: 0)
 
 When enabled, <cr> will cancel completion mode preserving the current text.
 

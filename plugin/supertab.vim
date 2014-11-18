@@ -128,7 +128,7 @@ set cpo&vim
   endif
 
   if !exists("g:SuperTabCrMapping")
-    let g:SuperTabCrMapping = 1
+    let g:SuperTabCrMapping = 0
   endif
 
   if !exists("g:SuperTabClosePreviewOnPopupClose")
