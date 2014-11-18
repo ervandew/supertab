@@ -989,9 +989,9 @@ endfunction " }}}
       " Not compatible w/ delimitMate since it doesn't play well with others
       " and will always return a <cr> which we don't want when selecting a
       " completion.
-    elseif maparg('<CR>','i') =~ '<CR>'
+    elseif maparg('<CR>', 'i') =~ '<CR>'
       let map = maparg('<cr>', 'i')
-      let cr = (map =~? '\(^\|[^)]\)<cr>')
+      let cr = !(map =~? '\(^\|[^)]\)<cr>' || map =~ 'ExpandCr')
       let map = s:ExpandMap(map)
       exec "inoremap <script> <cr> <c-r>=<SID>SelectCompletion(" . cr . ")<cr>" . map
     else
