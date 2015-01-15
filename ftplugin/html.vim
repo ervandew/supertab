@@ -39,7 +39,23 @@ if !exists('b:SuperTabContextTextMemberPatterns')
   let b:SuperTabContextTextMemberPatterns = ['</']
 endif
 if !exists('b:SuperTabContextTextOmniPrecedence')
-  let b:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+  let set_precedence = 1
+
+  " don't set omni precedence when user is using eclim + php
+  if &ft == 'php'
+    try
+      let project = eclim#project#util#GetCurrentProjectName()
+      if project != ''
+        let natures = eclim#project#util#GetProjectNatureAliases(project)
+        let set_precedence = !eclim#util#ListContains(natures, 'php')
+      endif
+    catch /E117/
+    endtry
+  endif
+
+  if set_precedence
+    let b:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+  endif
 endif
 
 " vim:ft=vim:fdm=marker
