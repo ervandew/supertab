@@ -13,7 +13,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2014
+"   Copyright (c) 2002 - 2015
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -236,7 +236,7 @@ function! SuperTabLongestHighlight(dir) " {{{
   " When longest highlight is enabled, this function is used to do the actual
   " selection of the completion popup entry.
 
-  if !pumvisible()
+  if !s:CompletionMode()
     return ''
   endif
   return a:dir == -1 ? "\<up>" : "\<down>"
@@ -334,11 +334,12 @@ function! s:ManualCompletionEnter() " {{{
     if g:SuperTabLongestHighlight &&
      \ &completeopt =~ 'longest' &&
      \ &completeopt =~ 'menu' &&
-     \ !pumvisible()
+     \ !s:CompletionMode()
       let dir = (complType == "\<c-x>\<c-p>") ? -1 : 1
       call feedkeys("\<c-r>=SuperTabLongestHighlight(" . dir . ")\<cr>", 'n')
     endif
 
+    call s:StartCompletionMode()
     return complType
   endif
 
@@ -396,7 +397,7 @@ function! SuperTab(command) " {{{
       call s:EnableNoCompleteAfterReset()
     endif
 
-    if !pumvisible()
+    if !s:CompletionMode()
       let b:complTypeManual = ''
     endif
 
@@ -418,7 +419,7 @@ function! SuperTab(command) " {{{
 
     " already in completion mode and not resetting for longest enhancement, so
     " just scroll to next/previous
-    elseif pumvisible() && !b:complReset
+    elseif s:CompletionMode() && !b:complReset
       let type = b:complType == 'context' ? b:complTypeContext : b:complType
       if a:command == 'n'
         return type == "\<c-p>" || type == "\<c-x>\<c-p>" ? "\<c-p>" : "\<c-n>"
@@ -455,7 +456,7 @@ function! SuperTab(command) " {{{
     if g:SuperTabLongestHighlight &&
      \ &completeopt =~ 'longest' &&
      \ &completeopt =~ 'menu' &&
-     \ (!pumvisible() || b:complReset)
+     \ (!s:CompletionMode() || b:complReset)
       let dir = (complType == "\<c-p>") ? -1 : 1
       call feedkeys("\<c-r>=SuperTabLongestHighlight(" . dir . ")\<cr>", 'n')
     endif
@@ -464,13 +465,14 @@ function! SuperTab(command) " {{{
       let b:complReset = 0
       " not an accurate condition for everyone, but better than sending <c-e>
       " at the wrong time.
-      if pumvisible()
+      if s:CompletionMode()
         return "\<c-e>" . complType
       endif
     endif
 
-    if g:SuperTabUndoBreak && !pumvisible()
-        return "\<c-g>u" . complType
+    if g:SuperTabUndoBreak && !s:CompletionMode()
+      call s:StartCompletionMode()
+      return "\<c-g>u" . complType
     endif
 
     if g:SuperTabCompleteCase == 'ignore' ||
@@ -490,6 +492,7 @@ function! SuperTab(command) " {{{
       endif
     endif
 
+    call s:StartCompletionMode()
     return complType
   endif
 
@@ -549,6 +552,21 @@ function! s:SuperTabHelp() " {{{
   let b:winnr = winnr
 endfunction " }}}
 
+function! s:CompletionMode() " {{{
+  return pumvisible() || exists('b:supertab_completion_mode')
+endfunction " }}}
+
+function! s:StartCompletionMode() " {{{
+  if exists('##CompleteDone')
+    let b:supertab_completion_mode = 1
+    augroup supertab_completion_mode
+      autocmd CompleteDone <buffer>
+        \ unlet b:supertab_completion_mode |
+        \ autocmd! supertab_completion_mode
+    augroup END
+  endif
+endfunction " }}}
+
 function! s:WillComplete(...) " {{{
   " Determines if completion should be kicked off at the current location.
   " Optional arg:
@@ -556,7 +574,7 @@ function! s:WillComplete(...) " {{{
 
   " if an arg was supplied, then we will re-check even if already in
   " completion mode.
-  if pumvisible() && !a:0
+  if s:CompletionMode() && !a:0
     return 1
   endif
 
@@ -1002,7 +1020,7 @@ endfunction " }}}
     endif
     function! s:SelectCompletion(cr)
       " selecting a completion
-      if pumvisible()
+      if s:CompletionMode()
         " ugly hack to let other <cr> mappings for other plugins cooperate
         " with supertab
         let b:supertab_pumwasvisible = 1
