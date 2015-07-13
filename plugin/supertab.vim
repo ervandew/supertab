@@ -969,7 +969,9 @@ endfunction " }}}
 
 " Key Mappings {{{
   " map a regular tab to ctrl-tab (note: doesn't work in console vim)
-  exec 'inoremap ' . g:SuperTabMappingTabLiteral . ' <tab>'
+  if !exists("g:SuperTabSkipMappingTabLiteral")
+    exec 'inoremap ' . g:SuperTabMappingTabLiteral . ' <tab>'
+  endif
 
   inoremap <silent> <c-x> <c-r>=<SID>ManualCompletionEnter()<cr>
 
