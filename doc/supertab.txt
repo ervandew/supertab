@@ -117,6 +117,10 @@ Sets the default completion type used when g:SuperTabDefaultCompletionType is
 set to 'context' and no completion type is returned by any of the configured
 contexts.
 
+  Note: supertab also supports the b:SuperTabContextDefaultCompletionType
+  variable allowing you to set the default type separately for the current
+  buffer, like from an ftplugin for example.
+
 
 Completion contexts                 *supertab-completioncontexts*
                                     *g:SuperTabCompletionContexts*

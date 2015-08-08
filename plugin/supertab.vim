@@ -276,6 +276,11 @@ function! s:InitBuffer() " {{{
     let b:SuperTabDefaultCompletionType = g:SuperTabDefaultCompletionType
   endif
 
+  if !exists('b:SuperTabContextDefaultCompletionType')
+    let b:SuperTabContextDefaultCompletionType =
+      \ g:SuperTabContextDefaultCompletionType
+  endif
+
   " set the current completion type to the default
   call SuperTabSetCompletionType(b:SuperTabDefaultCompletionType)
 
@@ -432,7 +437,7 @@ function! SuperTab(command) " {{{
       let complType = s:ContextCompletion()
       if complType == ''
         exec "let complType = \"" .
-          \ escape(g:SuperTabContextDefaultCompletionType, '<') . "\""
+          \ escape(b:SuperTabContextDefaultCompletionType, '<') . "\""
       endif
       let b:complTypeContext = complType
 
