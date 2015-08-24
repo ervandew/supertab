@@ -411,9 +411,7 @@ the first argument is the name of a vim compatible |complete-function| and the
 second is one of vim's insert completion (|ins-completion|) key bindings
 (<c-p>, <c-n>, <c-x><c-]>, etc). Calling this function will set the current
 buffer's |completefunc| option to a supertab provided implementation which
-utilizes the supplied arguments to perform the completion. Since the
-|completefunc| option is being set, this feature must be used with
-|g:SuperTabDefaultCompletionType| set to either "context" or "<c-x><c-u>".
+utilizes the supplied arguments to perform the completion.
 
 Here is an example that can be added to your .vimrc which will setup the
 supertab chaining for any filetype that has a provided |omnifunc| to first
@@ -422,21 +420,17 @@ try that, then fall back to supertab's default, <c-p>, completion:
 >
   autocmd FileType *
     \ if &omnifunc != '' |
-    \   call SuperTabChain(&omnifunc, "<c-p>") |
-    \   call SuperTabSetDefaultCompletionType("<c-x><c-u>") |
+    \   call SuperTabChain(&omnifunc, "<c-p>")
     \ endif
 <
 
-Notice that this autocmd set's the supertab default completion type to user
-completion. This is because the call to SuperTabChain will set your buffer's
-|'completefunc'| to a supertab defined function which handles the completion
-chaining. If that function is never called, by user completion being invoked
-via supertab, then completion chaining will not execute. As noted above though,
-instead of setting the default to user completion, you can alternatively set
-it supertab's 'context' completion type, in which case supertab's 'context'
-completion mechanism document above will execute first, and when that context
-logic kicks off a user completion, based on the current context, then
-supertab's completion chaining will then take over.
+You can also specify whether or not the 'context' completion method will
+be used as part of your completion chaining. If you've already set your
+default completion type to 'context', then no further action is needed. If
+however you haven't set that or don't want to use 'context' completion in this
+case, then you can supply a third argument to SuperTabChain which is a boolean
+(1 or 0) indicationg whether you want to use 'context' completion (1) or not
+(0).
 
 Here is an example where 'context' is the global default and completion
 chaining is enabled for file types that have omni completion support:
@@ -449,7 +443,7 @@ chaining is enabled for file types that have omni completion support:
     \ endif
 <
 
-That configuration will result in a completion flow like so:
+This configuration will result in a completion flow like so:
 
   if text before the cursor looks like a file path:
     use file completion
@@ -475,10 +469,5 @@ Note: If the |completefunc| or |omnifunc| use vim's |complete_add()| instead
 of returning completion results as a list, then Supertab's completion chaining
 won't work properly with it since Supertab uses the function result to
 determine if it should fallback to the next completion type.
-
-Note: If you are using the 'context' completion type, be sure to _not_ set the
-|g:SuperTabContextTextOmniPrecedence| variable. The supertab default value for
-that setting works with completion chaining, but if you change it, you may be
-telling supertab to bypass its completion chaining logic.
 
 vim:tw=78:ts=8:ft=help:norl:

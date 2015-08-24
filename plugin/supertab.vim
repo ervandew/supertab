@@ -181,6 +181,12 @@ function! SuperTabSetDefaultCompletionType(type) " {{{
   " Globally available function that users can use to set the default
   " completion type for the current buffer, like in an ftplugin.
 
+  " don't allow overriding what SuperTabChain has set, otherwise chaining may
+  " not work.
+  if exists('b:SuperTabChain')
+    return
+  endif
+
   " init hack for <c-x><c-v> workaround.
   let b:complCommandLine = 0
 
@@ -201,6 +207,12 @@ function! SuperTabSetCompletionType(type) " {{{
   " buffer, use SuperTabDefaultCompletionType(type) instead.  Example mapping to
   " restore SuperTab default:
   "   nmap <F6> :call SetSuperTabCompletionType("<c-p>")<cr>
+
+  " don't allow overriding what SuperTabChain has set, otherwise chaining may
+  " not work.
+  if exists('b:SuperTabChain')
+    return
+  endif
 
   call s:InitBuffer()
   exec "let b:complType = \"" . escape(a:type, '<') . "\""
@@ -889,8 +901,16 @@ function! s:ExpandMap(map) " {{{
   return map
 endfunction " }}}
 
-function! SuperTabChain(completefunc, completekeys) " {{{
+function! SuperTabChain(completefunc, completekeys, ...) " {{{
   if a:completefunc != 'SuperTabCodeComplete'
+    call s:InitBuffer()
+    if (a:0 && a:1) || (!a:0 && b:SuperTabDefaultCompletionType == 'context')
+      let b:SuperTabContextTextOmniPrecedence = ['&completefunc', '&omnifunc']
+      call SuperTabSetDefaultCompletionType("context")
+    else
+      call SuperTabSetDefaultCompletionType("<c-x><c-u>")
+    endif
+
     let b:SuperTabChain = [a:completefunc, a:completekeys]
     setlocal completefunc=SuperTabCodeComplete
   endif
