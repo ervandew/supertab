@@ -578,7 +578,9 @@ function! s:StartCompletionMode() " {{{
     let b:supertab_completion_mode = 1
     augroup supertab_completion_mode
       autocmd CompleteDone <buffer>
-        \ unlet b:supertab_completion_mode |
+        \ if exists('b:supertab_completion_mode') |
+          \ unlet b:supertab_completion_mode |
+        \ endif |
         \ autocmd! supertab_completion_mode
     augroup END
   endif
