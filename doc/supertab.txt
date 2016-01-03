@@ -420,7 +420,7 @@ try that, then fall back to supertab's default, <c-p>, completion:
 >
   autocmd FileType *
     \ if &omnifunc != '' |
-    \   call SuperTabChain(&omnifunc, "<c-p>")
+    \   call SuperTabChain(&omnifunc, "<c-p>") |
     \ endif
 <
 
