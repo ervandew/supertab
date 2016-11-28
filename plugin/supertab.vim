@@ -13,7 +13,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2015
+"   Copyright (c) 2002 - 2016
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -248,7 +248,7 @@ function! SuperTabLongestHighlight(dir) " {{{
   " When longest highlight is enabled, this function is used to do the actual
   " selection of the completion popup entry.
 
-  if !s:CompletionMode()
+  if !pumvisible()
     return ''
   endif
   return a:dir == -1 ? "\<up>" : "\<down>"
