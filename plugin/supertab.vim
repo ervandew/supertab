@@ -703,8 +703,8 @@ function! s:CaptureKeyPresses() " {{{
         \ '<bs>': s:CaptureKeyMap('<bs>'),
         \ '<c-h>': s:CaptureKeyMap('<c-h>'),
       \ }
-    " TODO: use &keyword to get an accurate list of chars to map
-    for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_', '.\zs')
+    " &keyword chars
+    for c in filter(map(range(33,126),'nr2char(v:val)'),'v:val =~ "\\k"')
       let existing = s:CaptureKeyMap(c)
       let b:captured[c] = existing
       exec 'imap <buffer> ' . c . ' <c-r>=<SID>CompletionReset("' . c . '")<cr>'
