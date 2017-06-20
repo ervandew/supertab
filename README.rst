@@ -170,3 +170,10 @@ Frequently Asked Questions
   agree with his finding) that while coding, the keyword match you want is
   typically the closer of the matches above the cursor, which `<c-p>` naturally
   provides.
+
+- **How to prevent Supertab from completing after certain characters?**
+
+  Please use the `g:SuperTabNoCompleteAfter` functionality like this:
+
+  ::
+    let g:SuperTabNoCompleteAfter = ['^', '\s', '0', '1', '2', '3', '4', '5', '6', '7', '8', '0', '*', '-', '+', '/']
