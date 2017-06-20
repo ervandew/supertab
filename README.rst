@@ -1,4 +1,4 @@
-.. Copyright (c) 2012 - 2014, Eric Van Dewoestine
+.. Copyright (c) 2012 - 2017, Eric Van Dewoestine
    All rights reserved.
 
    Redistribution and use of this software in source and binary forms, with
@@ -95,6 +95,19 @@ You have a few options when it comes to installing supertab:
 
      $ vim supertab.vmb
      :source %
+
+Documentation
+-------------
+
+You can access the supertab documentation from within vim using the following
+command:
+
+::
+
+  :help supertab
+
+You can also view the text file on
+`github <https://github.com/ervandew/supertab/blob/master/doc/supertab.txt>`_.
 
 Frequently Asked Questions
 --------------------------
