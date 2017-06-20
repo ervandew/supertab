@@ -173,7 +173,7 @@ Frequently Asked Questions
 
 - **How to prevent Supertab from completing after certain characters?**
 
-  Please use the `g:SuperTabNoCompleteAfter` functionality like this:
+  Please use the `g:SuperTabNoCompleteAfter` functionality. You can add a line like this to your .vimrc
 
   ::
     let g:SuperTabNoCompleteAfter = ['^', '\s', '0', '1', '2', '3', '4', '5', '6', '7', '8', '0', '*', '-', '+', '/']
