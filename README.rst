@@ -112,6 +112,33 @@ You can also view the text file on
 Frequently Asked Questions
 --------------------------
 
+- **Why isn't anything happening when I hit <tab>?**
+
+  First make sure you properly installed supertab and that you have plugin
+  support enabled in vim. You can run the following in vim to check that
+  supertab was loaded:
+
+  ::
+
+    :scriptnames
+
+  Next make sure that the supertab insert mapping exists. It's possible some
+  other plugin could have overridden the mapping. You can check this by running
+  the following in vim, which would show that it's mapped to `SuperTabForward`:
+
+  ::
+
+    :verbose imap <tab>
+
+  If supertab has been loaded and the insert mapping looks correct, make sure
+  you don't have the `paste` option enabled in your vimrc or elsewhere. When
+  that option is enabled, all insert mappings are disabled. You can run the
+  following command in vim to check if and where that option was set:
+
+  ::
+
+    :verbose set paste?
+
 - **Why isn't supertab honoring my configured settings (attempts to complete at the
   start of a line, always performs keyword completion instead of my configured
   default, etc.)?**
