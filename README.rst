@@ -43,7 +43,7 @@ completion needs (:help ins-completion).
 Features
 --------
 
-- Configurable to suit you needs:
+- Configurable to suit your needs:
 
   - Default completion type to use.
   - Prevent <Tab> from completing after/before defined patterns.
