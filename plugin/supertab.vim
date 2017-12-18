@@ -955,6 +955,22 @@ function! SuperTabCodeComplete(findstart, base) " {{{
   exec 'let keys = "' . escape(b:SuperTabChain[1], '<') . '"'
   " <c-e>: stop completion and go back to the originally typed text.
   call feedkeys("\<c-e>" . keys, 'nt')
+
+  " Hack: Do not stop iterating completions on next SuperTab() call.
+  let b:supertab_complType_skip = 1
+  let b:supertab_complType_save = b:complType
+  let b:complType = keys
+  augroup supertab_completion_type
+    autocmd CompleteDone <buffer>
+      \ if exists('b:supertab_complType_skip') |
+        \ unlet b:supertab_complType_skip |
+      \ else |
+        \ let b:complType = b:supertab_complType_save |
+        \ unlet b:supertab_complType_save |
+        \ autocmd! supertab_completion_type |
+      \ endif
+  augroup END
+
   return []
 endfunction " }}}
 
