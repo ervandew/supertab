@@ -1,4 +1,4 @@
-.. Copyright (c) 2012 - 2017, Eric Van Dewoestine
+.. Copyright (c) 2012 - 2020, Eric Van Dewoestine
    All rights reserved.
 
    Redistribution and use of this software in source and binary forms, with
@@ -76,7 +76,7 @@ You have a few options when it comes to installing supertab:
 
      $ mkdir -p ~/.vim/pack/plugins/start
      $ git clone --depth=1 git@github.com:ervandew/supertab.git ~/.vim/pack/plugins/start/supertab
-   
+
    Depending on your system you may also need to add :code:`packloadall` to your :code:`~/.vimrc`.
 
 2. Use your linux package manager:
@@ -93,17 +93,6 @@ You have a few options when it comes to installing supertab:
    <https://github.com/tpope/vim-pathogen>`_ and `vundle
    <https://github.com/gmarik/Vundle.vim>`_. Please refer to their docs for
    instructions on how to install plugins.
-
-4. And lastly you can use the vimball (.vmb) file found on
-   `vim.org <http://www.vim.org/scripts/script.php?script_id=1643>`_:
-
-   Vimball files are installed by simply opening them in vim and then sourcing
-   the file:
-
-   ::
-
-     $ vim supertab.vmb
-     :source %
 
 Documentation
 -------------
