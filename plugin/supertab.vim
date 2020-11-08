@@ -1008,8 +1008,8 @@ endfunction " }}}
     endif
   endif
 
-  exec 'imap ' . g:SuperTabMappingForward . ' <Plug>SuperTabForward'
-  exec 'imap ' . g:SuperTabMappingBackward . ' <Plug>SuperTabBackward'
+  exec 'imap <silent> ' . g:SuperTabMappingForward . ' <Plug>SuperTabForward'
+  exec 'imap <silent> ' . g:SuperTabMappingBackward . ' <Plug>SuperTabBackward'
 
   if g:SuperTabCrMapping
     let expr_map = 0
