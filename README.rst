@@ -75,7 +75,7 @@ You have a few options when it comes to installing supertab:
    ::
 
      $ mkdir -p ~/.vim/pack/plugins/start
-     $ git clone --depth=1 git@github.com:ervandew/supertab.git ~/.vim/pack/plugins/start/supertab
+     $ git clone --depth=1 https://github.com/ervandew/supertab.git ~/.vim/pack/plugins/start/supertab
 
    Depending on your system you may also need to add :code:`packloadall` to your :code:`~/.vimrc`.
 
