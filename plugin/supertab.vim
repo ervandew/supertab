@@ -13,7 +13,7 @@
 " }}}
 "
 " License: {{{
-"   Copyright (c) 2002 - 2016
+"   Copyright (c) 2002 - 2024
 "   All rights reserved.
 "
 "   Redistribution and use of this software in source and binary forms, with
@@ -770,6 +770,12 @@ function! s:ReleaseKeyPresses() " {{{
       endif
 
       if type(mapping) == 4
+        if !has_key(mapping, 'rhs')
+          " seems to be a neovim thing where thre is no rhs, but there is a
+          " 'callback' key, which is not a documented key in the neovim docs,
+          " so it's unclear if this should be restored somehow or not.
+          continue
+        endif
         let restore = mapping.noremap ? "inoremap" : "imap"
         let restore .= " <buffer>"
         if mapping.silent
