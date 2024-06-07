@@ -52,7 +52,7 @@
 "     $ vim -u NONE -U NONE -c "set nocp | runtime plugin/supertab.vim"
 " }}}
 
-if v:version < 700
+if !has('nvim') && v:version < 900
   finish
 endif
 
