@@ -715,12 +715,7 @@ function! s:CaptureKeyPresses() " {{{
 endfunction " }}}
 
 function! s:CaptureKeyMap(key) " {{{
-  " as of 7.3.032 maparg supports obtaining extended information about the
-  " mapping.
-  if s:has_dict_maparg
-    return maparg(a:key, 'i', 0, 1)
-  endif
-  return maparg(a:key, 'i')
+  return maparg(a:key, 'i', 0, 1)
 endfunction " }}}
 
 function! s:IsPreviewOpen() " {{{
@@ -768,34 +763,7 @@ function! s:ReleaseKeyPresses() " {{{
       if !len(mapping)
         continue
       endif
-
-      if type(mapping) == 4
-        if !has_key(mapping, 'rhs')
-          " seems to be a neovim thing where thre is no rhs, but there is a
-          " 'callback' key, which is not a documented key in the neovim docs,
-          " so it's unclear if this should be restored somehow or not.
-          continue
-        endif
-        let restore = mapping.noremap ? "inoremap" : "imap"
-        let restore .= " <buffer>"
-        if mapping.silent
-          let restore .= " <silent>"
-        endif
-        if mapping.expr
-          let restore .= " <expr>"
-        endif
-        let rhs = substitute(mapping.rhs, '<SID>\c', '<SNR>' . mapping.sid . '_', 'g')
-        let restore .= ' ' . key . ' ' . rhs
-        exec restore
-      elseif type(c) == 1
-        let args = substitute(mapping, '.*\(".\{-}"\).*', '\1', '')
-        if args != mapping
-          let args = substitute(args, '<', '<lt>', 'g')
-          let expr = substitute(mapping, '\(.*\)".\{-}"\(.*\)', '\1%s\2', '')
-          let mapping = printf(expr, args)
-        endif
-        exec printf("imap <silent> <buffer> %s %s", key, mapping)
-      endif
+      call mapset(mapping)
     endfor
     unlet b:captured
 
