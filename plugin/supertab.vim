@@ -529,7 +529,13 @@ function! SuperTab(command) " {{{
     " support triggering <s-tab> mappings users might have.
     if exists('s:ShiftTab')
       if type(s:ShiftTab) == 2
-        return s:ShiftTab()
+        let result = s:ShiftTab()
+        " account for any nvim callback mappings that return unescaped values
+        " eg. nvim snippet mapping which returns '<Cmd>...' or '<S-Tab>'
+        if result[0] == '<'
+          let result = eval('"' . escape(result, '\"<') . '"')
+        endif
+        return result
       else
         call feedkeys(s:ShiftTab, 'n')
       endif
@@ -969,9 +975,13 @@ endfunction " }}}
     if s:has_dict_maparg
       let existing_stab = maparg('<s-tab>', 'i', 0, 1)
       if len(existing_stab) && existing_stab.expr
-        let stab = substitute(stab, '<SID>\c', '<SNR>' . existing_stab.sid . '_', '')
-        let stab = substitute(stab, '()$', '', '')
-        let s:ShiftTab = function(stab)
+        if has_key(existing_stab, 'callback')
+          let s:ShiftTab = existing_stab.callback
+        else
+          let stab = substitute(stab, '<SID>\c', '<SNR>' . existing_stab.sid . '_', '')
+          let stab = substitute(stab, '()$', '', '')
+          let s:ShiftTab = function(stab)
+        endif
         let stab = ''
       endif
     endif
