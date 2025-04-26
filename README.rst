@@ -70,7 +70,7 @@ Installation
 
 You have a few options when it comes to installing supertab:
 
-1. Use vim 8+ plugins:
+1. Use vim 9+ plugins:
 
    ::
 
