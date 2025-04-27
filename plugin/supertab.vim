@@ -753,8 +753,8 @@ function! s:ClosePreview() " {{{
         " ignore: no autocmds defined
       endtry
     endif
+    unlet b:supertab_close_preview
   endif
-  silent! unlet b:supertab_close_preview
 endfunction " }}}
 
 function! s:ReleaseKeyPresses() " {{{
